@@ -40,23 +40,18 @@ public class CalculatorTests
 }
 ```
 
-With NCrunch:
-- ✅ Green dot appears if the test passes
-- ❌ Red if it fails
-- ⚫ Black dot on code lines not covered by any test
-
 NCrunch places colored indicators not only next to the test method name, but also beside each line inside the test method — showing whether that specific line was executed and if the related test passed, failed, or remained untested.
 
 ---
 
 ## 🧠 Visual Indicators
 
-| Indicator | Meaning                        |
-|-----------|--------------------------------|
-| 🟢 Green   | Line covered by passing test   |
-| 🔴 Red     | Line covered by failing test   |
-| ⚫ Black   | Line not executed by any test  |
-| ⚪ Gray    | Test pending or in queue       |
+| **Indicator**            | **Meaning**                                             |
+|--------------------------|----------------------------------------------------------|
+| 🟢 **Green**              | Line executed by a test that passed                      |
+| 🔴 **Red**                | Line executed by a test that failed                      |
+| ⚪ **White / Light Gray** | Line not executed by any test (no coverage)              |
+| 🟡 **Yellow**             | Test pending / queued (not yet executed)                 |
 
 ---
 
