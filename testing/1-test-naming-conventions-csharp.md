@@ -44,6 +44,7 @@ Test names should:
 `IsAdult_Should_ReturnFalse_When_AgeIsLessThan18()`
 
 ✅ Useful in larger projects or when multiple methods are involved 
+
 ❌ Slightly longer method names
 
 ---
