@@ -40,7 +40,7 @@ public class CalculatorTests
 }
 ```
 
-
+---
 NCrunch places colored indicators not only next to the test method name, but also beside each line inside the test method — showing whether that specific line was executed and if the related test passed, failed, or remained untested.
 
 ## 🧠 Visual Indicators
