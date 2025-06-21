@@ -38,7 +38,17 @@ Test names should:
 
 ---
 
-### 3. `Given_Preconditions_When_State_Then_ExpectedResult` (BDD style)
+### 3. `MethodName_Should_ExpectedBehavior_When_StateUnderTest`
+
+**Example:**  
+`IsAdult_Should_ReturnFalse_When_AgeIsLessThan18()`
+
+✅ More readable / behavior-oriented / Useful in larger projects or when multiple methods are involved 
+❌ Slightly longer method names
+
+---
+
+### 4. `Given_Preconditions_When_State_Then_ExpectedResult` (BDD style)
 
 **Example:**  
 `Given_UserIsAuthenticated_When_InvalidAccountUsed_Then_TransactionFails()`
@@ -48,7 +58,7 @@ Test names should:
 
 ---
 
-### 4. `testFeatureBeingTested`
+### 5. `testFeatureBeingTested`
 
 **Example:**  
 `testIsNotAnAdultIfAgeLessThan18()`
@@ -64,6 +74,14 @@ There are many valid naming conventions — the **important thing is to pick one
 
 - `MethodName_StateUnderTest_ExpectedBehavior`  
 - `Should_ExpectedBehavior_When_StateUnderTest`
+- `MethodName_Should_ExpectedBehavior_When_StateUnderTest`
+
+  | Pattern                                  | Best For                 | Notes                                 |
+|------------------------------------------|---------------------------|----------------------------------------|
+| `Should_ExpectedBehavior_When_State`     | Simpler, smaller projects | Emphasizes behavior                    |
+| `MethodName_Should_ExpectedBehavior_When_State` | Larger projects, teams     | Emphasizes traceability to the method |
+
+Both are valid. Choose the one that fits your team, project size, and codebase clarity needs.
 
 Choose based on your team's preference and project style (e.g., unit tests vs. BDD).
 
@@ -84,6 +102,14 @@ public class PersonTests
 
     [Fact]
     public void Should_ReturnFalse_When_AgeIsLessThan18()
+    {
+        var person = new Person { Age = 15 };
+        var result = person.IsAdult();
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsAdult_Should_ReturnFalse_When_AgeIsLessThan18()
     {
         var person = new Person { Age = 15 };
         var result = person.IsAdult();
