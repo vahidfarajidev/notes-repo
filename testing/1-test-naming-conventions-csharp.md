@@ -75,8 +75,8 @@ There are many valid naming conventions — the **important thing is to pick one
 
 | Pattern                                           | Best For                 | Notes                                      |
 |--------------------------------------------------|---------------------------|---------------------------------------------|
-| `Should_ExpectedBehavior_When_State`             | Simpler, smaller projects | Emphasizes behavior                         |
-| `MethodName_Should_ExpectedBehavior_When_State`  | Larger projects, teams     | Emphasizes traceability to the method       |
+| `Should_ExpectedBehavior_When_StateUnderTest`             | Simpler, smaller projects | Emphasizes behavior                         |
+| `MethodName_Should_ExpectedBehavior_When_StateUnderTest`  | Larger projects, teams     | Emphasizes traceability to the method       |
 | `MethodName_StateUnderTest_ExpectedBehavior`     | Structured tests, AAA-style | Clean and straightforward, concise format   |
 
 Choose based on your team's preference and project style (e.g., unit tests vs. BDD).
