@@ -43,8 +43,15 @@ Fixtures handle **shared setup** across tests and define how long an object shou
 
 ### 🔹 Transient Fixture
 
-- A **new instance** of the test class is created for **each test method**
-- Common when using constructor-based setup
+In xUnit, the default behavior is that **each test method gets a new instance of the test class** — this is called a **Transient Fixture**.
+
+## ✅ What is a Transient Fixture?
+
+- Each `[Fact]` test causes xUnit to instantiate the test class anew.
+- It doesn't matter whether the class has a constructor or not.
+- Until you explicitly use something like `IClassFixture<T>`, **this is the default behavior**.
+
+### 🔧 Example (No constructor, still transient):
 
 ```csharp
 public class CalculatorTests
@@ -52,9 +59,41 @@ public class CalculatorTests
     private Calculator _calc = new Calculator();
 
     [Fact]
-    public void Add_TwoPositiveNumbers_ReturnsCorrectSum() => _calc.Add(1, 2).Should().Be(3);
+    public void Add_One() => _calc.Add(1, 2).Should().Be(3);
+
+    [Fact]
+    public void Add_Two() => _calc.Add(3, 4).Should().Be(7);
 }
 ```
+
+### 🔍 What happens here?
+
+- For each `[Fact]`, xUnit creates a **new instance** of `CalculatorTests`.
+- So `_calc` is initialized **separately for each test**.
+
+---
+
+## ✅ What about constructor-based setup?
+
+Many developers do setup inside the constructor like this:
+
+```csharp
+public class MyTests
+{
+    private readonly Service _service;
+
+    public MyTests()
+    {
+        _service = new Service(); // setup logic
+    }
+}
+```
+
+🟡 Even here, the behavior is **still transient** — each test gets its own `MyTests` instance.
+
+This does **not** make it shared unless you use a fixture like `IClassFixture<T>`.
+
+---
 
 ### 🔹 Persistent Fixture (Shared Across Tests)
 
