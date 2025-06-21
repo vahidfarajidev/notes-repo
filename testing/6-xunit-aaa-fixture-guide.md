@@ -52,7 +52,7 @@ public class CalculatorTests
     private Calculator _calc = new Calculator();
 
     [Fact]
-    public void Add_Works() => _calc.Add(1, 2).Should().Be(3);
+    public void Add_TwoPositiveNumbers_ReturnsCorrectSum() => _calc.Add(1, 2).Should().Be(3);
 }
 ```
 
@@ -77,7 +77,7 @@ public class CalculatorTests : IClassFixture<CalculatorFixture>
     }
 
     [Fact]
-    public void Add_Works() => _calc.Add(1, 2).Should().Be(3);
+    public void Add_TwoPositiveNumbers_ReturnsCorrectSum() => _calc.Add(1, 2).Should().Be(3);
 }
 ```
 
