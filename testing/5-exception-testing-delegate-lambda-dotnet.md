@@ -28,7 +28,7 @@ async Task DoSomethingAsync()
 ## 🔍 Code Walkthrough
 
 ### Synchronous case:
-Version 1 (concise lambda syntax):
+✔ Version 1 (concise lambda syntax):
 
 ```csharp
 Action act = () => calc.SquareRoot(-5);
@@ -44,7 +44,7 @@ This is useful in FluentAssertions:
 act.Should().Throw<ArgumentException>();
 ```
 
-Version 2 (explicit new Action with code block):
+✔ Version 2 (explicit new Action with code block):
 ```csharp
 var result = new Action(() => 
 {
