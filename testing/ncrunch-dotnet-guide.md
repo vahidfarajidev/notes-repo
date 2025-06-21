@@ -31,7 +31,7 @@ public class Calculator
 public class CalculatorTests
 {
     [Fact]
-    public void Add_ReturnsCorrectSum()
+    public void Add_TwoPositiveIntegers_ReturnsCorrectSum()
     {
         var calc = new Calculator();
         var result = calc.Add(2, 3);
@@ -44,6 +44,8 @@ With NCrunch:
 - ✅ Green dot appears if the test passes
 - ❌ Red if it fails
 - ⚫ Black dot on code lines not covered by any test
+
+NCrunch places colored indicators not only next to the test method name, but also beside each line inside the test method — showing whether that specific line was executed and if the related test passed, failed, or remained untested.
 
 ---
 
