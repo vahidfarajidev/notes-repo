@@ -43,6 +43,23 @@ This is useful in FluentAssertions:
 act.Should().Throw<ArgumentException>();
 ```
 
+```csharp
+var result = new Action(() => 
+{
+    calc.SquareRoot(-5);
+});
+
+result.Should().Throw<ArgumentException>();
+```
+
+---
+
+This form is especially helpful when your test logic includes multiple lines, or when you prefer a more explicit delegate creation syntax.
+
+For single-line actions, the lambda expression syntax is generally preferred.
+
+---
+
 ### Asynchronous case:
 
 ```csharp
