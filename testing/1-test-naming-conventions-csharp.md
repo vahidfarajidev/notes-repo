@@ -43,7 +43,7 @@ Test names should:
 **Example:**  
 `IsAdult_Should_ReturnFalse_When_AgeIsLessThan18()`
 
-✅ More readable / behavior-oriented / Useful in larger projects or when multiple methods are involved 
+✅ More readable / behavior-oriented / Useful in larger projects or when multiple methods are involved
 ❌ Slightly longer method names
 
 ---
