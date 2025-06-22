@@ -32,6 +32,35 @@ var obj = new MyClass();
 
 ---
 
+## 🛠 How to Handle Unmanaged Resources
+
+### Using `IDisposable`
+If a class holds unmanaged resources, implement `IDisposable` and release the resources in `Dispose()`:
+
+```csharp
+public class MyResource : IDisposable
+{
+    private FileStream _file = new FileStream("data.txt", FileMode.Open);
+
+    public void Dispose()
+    {
+        _file.Dispose();
+    }
+}
+```
+
+### Using the `using` Statement
+This automatically calls `Dispose()` when the block exits:
+
+```csharp
+using (var stream = new FileStream("file.txt", FileMode.Open))
+{
+    // use stream
+} // stream.Dispose() is called automatically
+```
+
+---
+
 ## 🧹 Why It Matters
 
 | Feature                   | Managed        | Unmanaged       |
@@ -39,16 +68,6 @@ var obj = new MyClass();
 | GC managed                | ✅ Yes         | ❌ No           |
 | Needs manual cleanup      | ❌ No          | ✅ Yes          |
 | Risk of memory leaks      | ❌ Low         | ✅ High         |
-
----
-
-## 🔄 Safe Usage Example (Unmanaged Resource)
-```csharp
-using (var file = new FileStream("file.txt", FileMode.Open))
-{
-    // Use the file
-} // Dispose() is called automatically
-```
 
 ---
 
