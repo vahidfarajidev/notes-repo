@@ -30,16 +30,6 @@ public record Person(string Name, int Age);
 
 ## ⚖️ Key Differences
 
-| Feature               | `class`                          | `record`                         |
-|----------------------|----------------------------------|----------------------------------|
-| Equality             | Reference equality               | Value (structural) equality      |
-| Use case             | Mutable objects with behavior    | Immutable data carriers          |
-| Syntax               | Verbose                          | Concise                          |
-| Inheritance          | Full inheritance support         | Supports inheritance (less used) |
-| Deconstruction       | Manual                           | Built-in                         |
-| Immutability         | Manual implementation            | Built-in support                 |
-
-
 | Feature         | `class`                          | `record`                         | Explanation |
 |----------------|----------------------------------|----------------------------------|-------------|
 | Equality        | Reference equality               | Value (structural) equality      | `record` compares values by default, `class` compares memory references |
