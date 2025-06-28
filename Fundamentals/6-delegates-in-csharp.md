@@ -111,8 +111,10 @@ Console.WriteLine(isEven(4)); // True
 ```
 
 ---
+
 If you need a specific delegate with a meaningful name (e.g., for clarity in APIs or events), use a custom delegate.
 If you prefer simplicity and flexibility (e.g., for callbacks, LINQ, or quick usage), use Func<>, Action<> or Predicate<>.
+
 ---
 
 ## ✅ Use Cases for Delegates
