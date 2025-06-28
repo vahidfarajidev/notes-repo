@@ -92,7 +92,6 @@ To avoid custom delegate declarations, C# provides reusable generic delegate typ
 Func<int, int, int> add = (a, b) => a + b;
 Console.WriteLine(add(10, 20)); // 30
 ```
----
 
 ## Defining a Custom `delegate`:
 
