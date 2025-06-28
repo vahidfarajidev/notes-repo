@@ -60,6 +60,8 @@ Console.WriteLine(calc(2, 3)); // 5
 Lambdas are shorthand for anonymous methods. Cleaner and more powerful:
 
 ```csharp
+public delegate int Calculate(int a, int b); // همچنان لازمه
+
 Calculate calc = (a, b) => a + b;
 Console.WriteLine(calc(5, 6)); // 11
 ```
