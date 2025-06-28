@@ -39,9 +39,11 @@ Console.WriteLine(calc(3, 4)); // 12
 
 ## 🔄 Anonymous Methods (C# 2.0)
 
-Instead of pointing to an existing method, you can define an inline method using `delegate`:
+To define an inline method with a delegate, the delegate type must be declared first:
 
 ```csharp
+public delegate int Calculate(int a, int b); // Required
+
 Calculate calc = delegate(int a, int b)
 {
     return a + b;
