@@ -92,6 +92,8 @@ To avoid custom delegate declarations, C# provides reusable generic delegate typ
 Func<int, int, int> add = (a, b) => a + b;
 Console.WriteLine(add(10, 20)); // 30
 ```
+If you need a specific delegate with a meaningful name (e.g., for clarity in APIs or events), use a custom delegate.
+If you prefer simplicity and flexibility (e.g., for callbacks, LINQ, or quick usage), use Func<> or Action<>.
 
 ---
 
