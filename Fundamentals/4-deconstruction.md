@@ -35,6 +35,16 @@ This allows direct access to `name` and `age` without having to write `person.Na
    ```
 
 2. **Improved readability in LINQ or pattern matching**
+
+   **Without deconstruction:**
+   ```csharp
+   foreach (var person in people)
+   {
+       Console.WriteLine($"{person.Name} is {person.Age} years old.");
+   }
+   ```
+
+   **With deconstruction:**
    ```csharp
    foreach (var (name, age) in people)
    {
