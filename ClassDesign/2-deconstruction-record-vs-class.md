@@ -1,3 +1,4 @@
+
 # Deconstruction: `record` vs `class` in C#
 
 Deconstruction lets you extract values from an object using tuple syntax.
@@ -36,6 +37,28 @@ public class Person
 
 var (name, age) = new Person("Bob", 40); // Works after manual setup
 ```
+
+### 🔍 Why does this work?
+
+The C# compiler looks for a method named **`Deconstruct`** with an exact signature matching the number and type of values you're extracting:
+
+- It must be named `Deconstruct`
+- It must return `void`
+- All parameters must be marked `out`
+
+For example:
+
+```csharp
+public void Deconstruct(out string name, out int age)
+```
+
+If you rename the method or change the signature, **destructuring will not work**:
+
+```csharp
+public void Split(out string name, out int age) // ❌ Won’t work
+```
+
+> ✅ The name `Deconstruct` is **not a reserved keyword**, but the compiler treats it specially in the context of destructuring.
 
 ---
 
