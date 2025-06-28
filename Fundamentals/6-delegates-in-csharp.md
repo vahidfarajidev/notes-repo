@@ -94,6 +94,55 @@ Console.WriteLine(add(10, 20)); // 30
 ```
 ---
 
+## Defining a Custom `delegate`:
+
+```csharp
+public delegate int Calculate(int a, int b); // Custom delegate definition
+Calculate calc = (a, b) => a + b;
+```
+
+## ✅ Modern Replacement Using `Func`:
+
+```csharp
+Func<int, int, int> add = (a, b) => a + b;
+```
+
+## 🔍 Detailed Comparison:
+
+| Part                                     | Explanation                                                             |
+|------------------------------------------|-------------------------------------------------------------------------|
+| `public delegate int Calculate(int a, int b)` | Defines a delegate type that takes two `int` inputs and returns an `int` |
+| `Func<int, int, int>`                   | Equivalent generic built-in type provided by .NET                        |
+
+---
+
+## 🧠 Summary:
+
+```csharp
+Func<int, int, int>
+```
+
+is effectively equivalent to:
+
+```csharp
+delegate int (int, int)
+```
+
+So:
+
+```csharp
+Func<int, int, int> add
+```
+
+does the same thing as:
+
+```csharp
+Calculate calc
+```
+
+— but without the need to define a custom delegate type.
+
+---
 ### 🔹 `Action<>` Example (no return)
 
 ```csharp
