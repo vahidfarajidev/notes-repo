@@ -13,6 +13,11 @@ Starting from **C# 7.0**, you can use named tuples to return multiple values fro
 
 ```csharp
 (string Name, int Age) GetPerson() => ("Ali", 28);
+or
+(string Name, int Age) GetPerson()
+{
+    return ("Vahid", 40);
+}
 
 // Usage:
 var person = GetPerson();
