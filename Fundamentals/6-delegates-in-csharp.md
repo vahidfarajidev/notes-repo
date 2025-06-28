@@ -93,7 +93,6 @@ Func<int, int, int> add = (a, b) => a + b;
 Console.WriteLine(add(10, 20)); // 30
 ```
 
-```csharp
 ## Defining a Custom `delegate`:
 
 ```csharp
@@ -141,7 +140,7 @@ Calculate calc
 ```
 
 — but without the need to define a custom delegate type.
----
+
 ---
 ### 🔹 `Action<>` Example (no return)
 
