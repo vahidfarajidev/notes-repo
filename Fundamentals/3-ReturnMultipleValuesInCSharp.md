@@ -1,7 +1,7 @@
 
 # Returning Multiple Values from a Method in C#
 
-In C#, returning more than one value from a method can be done in several ways, depending on the language version and coding style. This article covers three common approaches:
+In C#, returning more than one value from a method can be done in several ways, depending on the language version and coding style. This article covers four common approaches:
 
 ---
 
@@ -13,13 +13,20 @@ Starting from **C# 7.0**, you can use named tuples to return multiple values fro
 
 ```csharp
 (string Name, int Age) GetPerson() => ("Ali", 28);
+```
+
 or
+
+```csharp
 (string Name, int Age) GetPerson()
 {
     return ("Vahid", 40);
 }
+```
 
-// Usage:
+### Usage:
+
+```csharp
 var person = GetPerson();
 Console.WriteLine(person.Name); // Ali
 Console.WriteLine(person.Age);  // 28
@@ -65,6 +72,40 @@ Console.WriteLine(person.Name);
 Console.WriteLine(person.Age);
 ```
 
+
+### Alternative: Using a `struct`
+
+For lightweight data containers, you can also use a `struct` instead of a class. This is often used for performance in value-type scenarios.
+
+```csharp
+public struct Person
+{
+    public string Name;
+    public int Age;
+}
+
+public Person GetPerson()
+{
+    Person person = new Person();
+    person.Name = "Ali";
+    person.Age = 28;
+    return person;
+}
+```
+
+### Usage:
+
+```csharp
+var person = GetPerson();
+Console.WriteLine(person.Name);
+Console.WriteLine(person.Age);
+```
+
+### Notes:
+- `struct` is a value type and typically used for small, immutable data.
+- Avoid using `struct` if you plan to modify it frequently or need inheritance.
+
+
 ---
 
 ## ✅ 3. Older Way with `out` Parameters
@@ -79,8 +120,11 @@ void GetPerson(out string name, out int age)
     name = "Ali";
     age = 28;
 }
+```
 
-// Usage:
+### Usage:
+
+```csharp
 string name;
 int age;
 GetPerson(out name, out age);
@@ -94,17 +138,42 @@ Console.WriteLine(age);
 
 ---
 
-## Summary
+## ✅ 4. Classic Way with `Tuple<T1, T2>`
 
-| Method | Required C# Version | Pros | Cons |
-|--------|---------------------|------|------|
-| Named Tuples | C# 7.0 and later | Highly readable, no need for custom types | Requires newer version |
-| Using a Class | All versions | Extendable, object-oriented | More verbose code |
-| `out` Parameters | All versions | Simple for small data | Less readable, limited use cases |
+Before C# 7.0 introduced value tuples, developers could return multiple values using the `System.Tuple` class. This approach works in older versions like **C# 4.0 and later**.
+
+### Example:
+
+```csharp
+Tuple<string, int> GetPerson()
+{
+    return new Tuple<string, int>("Ali", 28);
+}
+
+// Usage:
+var person = GetPerson();
+Console.WriteLine(person.Item1); // Ali
+Console.WriteLine(person.Item2); // 28
+```
+
+### Advantages:
+- Works in older versions of C# (C# 4+)
+- No need to define a separate class
+
+### Drawbacks:
+- Members are accessed via `Item1`, `Item2`, etc., which makes the code less readable
+- Not as flexible or expressive as named tuples
 
 ---
 
-For modern projects, using tuples is recommended unless object-oriented modeling is necessary.
+## Summary
+
+| Method                | Required C# Version | Pros                                   | Cons                             |
+|-----------------------|---------------------|----------------------------------------|----------------------------------|
+| Named Tuples          | C# 7.0 and later     | Highly readable, no need for classes   | Requires newer version           |
+| Using a Class         | All versions         | Extendable, object-oriented            | More verbose code                |
+| `out` Parameters      | All versions         | Simple for small data                  | Less readable, limited use cases |
+| `Tuple<T1, T2>`       | C# 4.0 and later     | Works in older versions, no class req. | Poor readability                 |
 
 ---
 
