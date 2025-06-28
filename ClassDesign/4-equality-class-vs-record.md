@@ -111,6 +111,14 @@ Console.WriteLine(u1 == u2); // ❌ False — different references
 
 Here, identity is key — not just the values.
 
+
+In C#, `class` objects use **reference equality** by default when using `==`.
+
+Even if `u1.Id == u2.Id` evaluates to `true`, `u1` and `u2` are still **separate objects** — like two different boxes with the same content.
+
+> ⚠️ Because `class` is a **reference type**, `==` only checks if both variables point to the **same memory address**, not whether their data is equal.
+
+
 ---
 
 ### 📄 Value-based object (`record`)
