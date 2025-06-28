@@ -100,3 +100,26 @@ Console.WriteLine(age);
 ---
 
 For modern projects, using tuples is recommended unless object-oriented modeling is necessary.
+
+---
+
+## 🧠 Explanation of This Syntax
+
+The following line of code is a concise and modern way of returning multiple values using named tuples and an expression-bodied method:
+
+```csharp
+(string Name, int Age) GetPerson() => ("Ali", 28);
+```
+
+### Breakdown:
+
+- `(string Name, int Age)`: The return type is a tuple with named elements `Name` and `Age`.
+- `GetPerson()`: This is the method name.
+- `=> ("Ali", 28);`: This is an expression-bodied method that returns the tuple `("Ali", 28)` directly.
+
+This syntax is available from **C# 7.0** onwards and is great for returning lightweight, structured data without creating a separate class.
+
+### Benefits:
+- **Concise**: One-liner definition.
+- **Readable**: Named tuple elements make the code self-documenting.
+- **Efficient**: No need to define a new class or struct just to return a pair of values.
