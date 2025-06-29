@@ -56,7 +56,7 @@ Console.WriteLine(calc(2, 3)); // 5
 ---
 
 
-# 🧠 Why `delegate` is Used Again in Assignment
+## Why `delegate` is Used Again in Assignment
 
 The keyword `delegate` here is used to define an **anonymous function**.
 
