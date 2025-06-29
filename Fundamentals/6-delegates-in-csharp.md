@@ -161,7 +161,7 @@ Func<int, int, int> add = (a, b) => a + b;
 
 ---
 
-## 🧠 Summary:
+## Summary:
 
 ```csharp
 Func<int, int, int>
