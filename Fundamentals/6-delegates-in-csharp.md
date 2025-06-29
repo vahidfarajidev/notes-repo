@@ -55,6 +55,53 @@ Console.WriteLine(calc(2, 3)); // 5
 
 ---
 
+
+# 🧠 Why `delegate` is Used Again in Assignment
+
+The keyword `delegate` here is used to define an **anonymous function**.
+
+---
+
+## 🔍 Detailed Explanation:
+
+### 1. Declaring a delegate type:
+
+```csharp
+public delegate int Calculate(int a, int b);
+```
+
+This defines a new type called `Calculate` with a specific signature:
+It takes two `int` parameters and returns an `int`.
+
+---
+
+### 2. Creating an instance of the delegate with an anonymous method:
+
+```csharp
+Calculate calc = delegate(int a, int b)
+{
+    return a + b;
+};
+```
+
+In this example:
+
+- `delegate(int a, int b) { return a + b; }` is an **anonymous method**.
+- This method matches the exact signature defined by the `Calculate` delegate.
+- Therefore, it can be assigned directly to `calc`, which is of type `Calculate`.
+
+---
+
+## ✅ Equivalent Using Lambda Expression:
+
+```csharp
+Calculate calc = (a, b) => a + b;
+```
+
+The lambda expression is just a **newer and cleaner syntax** for doing the same thing as `delegate(...) { ... }`.
+
+---
+
 ## 🧠 Modern Syntax: Lambda Expressions (C# 3.0+)
 
 Lambdas are shorthand for anonymous methods. Cleaner and more powerful:
