@@ -1,5 +1,5 @@
 
-# 🧠 Usage of `Func` in C#
+# 🧠 Usage of Multiline `Func` in C#
 
 ```csharp
 Func<int, int, int> add = (a, b) =>
@@ -29,7 +29,8 @@ int DoSomething(Func<int, int, int> operation)
     return operation(3, 5);
 }
 
-int result = DoSomething(add);
+int result = DoSomething(add);  // Output: "Result is: 8"
+Console.WriteLine(result);      // Output: 8
 ```
 
 ---
@@ -42,11 +43,20 @@ var results = new List<int> { 1, 2, 3, 4, 5 }
     .ToList();
 ```
 
+**Console Output:**
+```
+Result is: 11
+Result is: 12
+Result is: 13
+Result is: 14
+Result is: 15
+```
+
 ---
 
 ### 3. When you need multiline logic
 
-For example, intermediate variables, logging, or conditional statements.
+Useful when you need intermediate variables, logs, or conditional logic inside the delegate.
 
 ---
 
