@@ -115,7 +115,8 @@ Console.WriteLine(calc(5, 6)); // 11
 
 ## ⚠️ Key Point
 
-You **must define** the delegate type (`Calculate`) **unless** you're using built-in generic delegates like `Func<>` or `Action<>`.
+To specify the signature of a function for use as a delegate, you **must define** a delegate type (such as `Calculate`);
+    unless you use built-in generic delegates like `Func<>`, `Action<>` or `Predicate<>`, which cover common method signatures.
 
 ---
 
