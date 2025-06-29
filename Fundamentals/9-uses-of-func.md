@@ -2,7 +2,7 @@
 
 `Func<>` is a built-in generic delegate in C# used to represent methods that **return a value**. It's one of the most powerful and flexible tools for writing clean, reusable, and functional-style code.
 
-Below are five practical examples showing how `Func<>` is used in real-world C# scenarios — including callback functions, LINQ, logic injection, and more.
+Below are six practical examples showing how `Func<>` is used in real-world C# scenarios — including callback functions, LINQ, logic injection, event handling, and more.
 
 ---
 
@@ -106,14 +106,38 @@ Encapsulate validation logic and make it customizable.
 
 ---
 
+## ✅ Example 6: Event Handling (Action used with Events)
+
+```csharp
+public class Button
+{
+    public event Action<string> Clicked;
+
+    public void SimulateClick()
+    {
+        Clicked?.Invoke("Button1");
+    }
+}
+
+var button = new Button();
+button.Clicked += name => Console.WriteLine($"{name} clicked!");
+
+button.SimulateClick(); // Output: Button1 clicked!
+```
+
+This shows how `Action` (and optionally `Func`) work within event-driven patterns.
+
+---
+
 ## 🧠 Summary
 
-| Example # | Use Case                   | Func Signature             |
-|-----------|----------------------------|----------------------------|
-| 1         | Basic operation            | `Func<int, int, int>`      |
-| 2         | LINQ filtering             | `Func<int, bool>`          |
-| 3         | Logic injection            | `Func<decimal, bool>`      |
-| 4         | Callback (progress format) | `Func<int, string>`        |
-| 5         | Callback (input validation)| `Func<string, bool>`       |
+| Example # | Use Case                    | Delegate Type              |
+|-----------|-----------------------------|----------------------------|
+| 1         | Basic operation             | `Func<int, int, int>`      |
+| 2         | LINQ filtering              | `Func<int, bool>`          |
+| 3         | Logic injection             | `Func<decimal, bool>`      |
+| 4         | Callback (progress format)  | `Func<int, string>`        |
+| 5         | Callback (input validation) | `Func<string, bool>`       |
+| 6         | Event handling              | `Action<string>`           |
 
-Using `Func<>` helps you write **more flexible, testable, and expressive code** without needing custom delegates.
+Using `Func<>` (and `Action<>`) helps you write **more flexible, testable, and expressive code** without needing custom delegates.
