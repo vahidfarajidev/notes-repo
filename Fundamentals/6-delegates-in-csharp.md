@@ -139,6 +139,17 @@ Func<int, int, int> add = (a, b) => a + b;
 Console.WriteLine(add(10, 20)); // 30
 ```
 
+or
+
+```csharp
+Func<int, int, int> add = (a, b) =>
+{
+    int result = a + b;
+    Console.WriteLine($"Result is: {result}");
+    return result;
+};
+```
+
 ## Defining a Custom `delegate`:
 
 ```csharp
