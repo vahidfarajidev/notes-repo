@@ -49,3 +49,26 @@ Bye
 ---
 
 Happy coding!
+
+## Calling Delegates: `()` vs `.Invoke()`
+
+Delegates in C# can be called using either the shorthand syntax `delegateName()` or the explicit method call `delegateName.Invoke()`.
+
+Both are functionally equivalent:
+
+```csharp
+notify();           // Shorthand
+notify.Invoke();    // Equivalent, more explicit
+```
+
+### When to Use `.Invoke()`?
+
+- When you want to use **null-safe calls**:
+  ```csharp
+  Notify? notify = SomeCondition ? SayHello : null;
+  notify?.Invoke(); // Won't throw if notify is null
+  ```
+
+- When writing **more readable or formal** code in certain contexts
+
+Both styles are valid, and choosing between them is mostly a matter of preference or readability.
