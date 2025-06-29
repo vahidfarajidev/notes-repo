@@ -53,8 +53,6 @@ Console.WriteLine(calc(2, 3)); // 5
 
 > This still **requires the `Calculate` delegate type** to be defined beforehand.
 
----
-
 
 ## Why `delegate` is Used Again in Assignment
 
