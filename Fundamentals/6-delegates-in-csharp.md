@@ -195,6 +195,17 @@ Action<string> greet = name => Console.WriteLine($"Hello, {name}!");
 greet("Ali"); // Hello, Ali!
 ```
 
+or
+
+```csharp
+Action<string> greet = name =>
+{
+    Console.WriteLine("------");
+    Console.WriteLine($"Hello, {name}!");
+    Console.WriteLine("Welcome!");
+};
+```
+
 ---
 
 ### 🔹 `Predicate<>` Example (returns bool)
