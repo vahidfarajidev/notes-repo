@@ -176,14 +176,42 @@ Application.Current.Dispatcher.Invoke(() =>
 
 ---
 
+---
+
 ## 🧠 What Do async, await, and "Non-Blocking" Really Mean?
 
-### 🔸 `async` lets a method run **asynchronously**
+### 🔸 `async` lets a method run **asynchronously** — *What does "asynchronously" mean?*
 
-- This means the method **can perform long-running tasks** (like web calls, file I/O, or DB queries)
-- ...**without freezing the rest of the app**
-- Especially important in **UI apps** or **web servers** where responsiveness matters
+It means the method can perform **long-running tasks (like I/O)** without blocking the thread.  
+Instead of doing everything step-by-step and waiting (like synchronous code), it can **start a task, yield control**, and **resume later**.  
+Useful for keeping apps responsive, especially in UI or web apps.
 
+---
+
+### 🔸 `await` pauses the method **until the awaited task completes — without blocking the thread**
+
+- When you write `await SomeAsyncOperation()`, the method **pauses at that point**
+- But **the current thread is not blocked** — it’s **freed** to handle other things
+- The runtime sets up a continuation to **resume the method later**, on the same or different thread
+
+👀 Think of it like:
+> “Pause here, let someone else use the thread, and come back when the result is ready.”
+
+---
+
+### 🔸 Execution resumes after the awaited line finishes — *So is it just synchronous?*
+
+Not quite.
+
+Although the flow **looks** synchronous (line-by-line), it's still **asynchronous in behavior**:
+
+| Feature            | Synchronous                          | async/await                            |
+|--------------------|--------------------------------------|----------------------------------------|
+| Thread usage       | Blocked during the operation         | Freed and reused elsewhere             |
+| Responsiveness     | UI/server might freeze               | App remains interactive or scalable    |
+| Continuations      | No                                   | Yes — resumes from where it left off   |
+
+✅ So you get the clarity of sync code — **without** the performance limitations.
 ---
 
 ### 🔸 `await` pauses the method **without blocking the thread**
