@@ -10,6 +10,39 @@ Each method has its own use cases, trade-offs, and configuration requirements. T
 
 ---
 
+## 🧱 Example Entity Classes
+
+```csharp
+public class Blog
+{
+    public int BlogId { get; set; }
+    public string Name { get; set; }
+
+    public virtual ICollection<Post> Posts { get; set; }  // Note: 'virtual' is needed for Lazy Loading
+}
+
+public class Post
+{
+    public int PostId { get; set; }
+    public string Title { get; set; }
+
+    public int BlogId { get; set; }
+    public virtual Blog Blog { get; set; }
+
+    public virtual Author Author { get; set; }  // For reference loading
+}
+
+public class Author
+{
+    public int AuthorId { get; set; }
+    public string Name { get; set; }
+
+    public virtual ICollection<Post> Posts { get; set; }
+}
+```
+
+---
+
 ## 🔹 Eager Loading
 
 ### ✅ Definition
@@ -18,9 +51,9 @@ Eager Loading loads related data **along with the main entity** in a single quer
 ### 🧪 Example
 
 ```csharp
-var blog = context.Blogs
+var blogs = context.Blogs
     .Include(b => b.Posts)
-    .FirstOrDefault();
+    .ToList();
 ```
 
 ### 👍 Pros
@@ -57,6 +90,11 @@ var posts = blog.Posts; // EF triggers a separate query here
 - Can cause **N+1 query problem** (many small DB calls).
 - Requires extra setup.
 
+### ❓ Common Question:  
+**"What does it mean that EF loads data automatically when you access a property?"**
+
+> EF uses dynamic proxy classes that override your virtual properties. When you access something like `blog.Posts`, EF detects the access and fires a SQL query behind the scenes to load that data.
+
 ---
 
 ## 🔹 Explicit Loading
@@ -87,7 +125,21 @@ context.Entry(post)
 
 ### 👎 Cons
 - Requires more code.
-- Still suffers from **N+1 problem** if not handled carefully.
+- Can still result in **N+1 problem** if not optimized.
+
+### ❓ Common Question:
+**"Does Explicit Loading also cause multiple queries like Lazy Loading?"**
+
+> Yes — if you load related entities in a loop:
+
+```csharp
+foreach (var blog in context.Blogs)
+{
+    context.Entry(blog).Collection(b => b.Posts).Load();
+}
+```
+
+This results in multiple queries: one for each `Blog` (N+1 problem). To avoid this, use `Include()` when you need to bulk load.
 
 ---
 
