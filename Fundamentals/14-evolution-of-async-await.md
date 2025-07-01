@@ -182,9 +182,9 @@ Application.Current.Dispatcher.Invoke(() =>
 
 ### 🔸 `async` lets a method run **asynchronously** — *What does "asynchronously" mean?*
 
-It means the method can perform **long-running tasks (like I/O)** without blocking the thread.  
-Instead of doing everything step-by-step and waiting (like synchronous code), it can **start a task, yield control**, and **resume later**.  
-Useful for keeping apps responsive, especially in UI or web apps.
+It means the method can perform long-running tasks (like I/O) without blocking the current thread.
+Instead of doing everything step-by-step and waiting (like synchronous code), it can **start a task, yield control**, and **resume later**. The current thread is freed up to do other work, while the long-running task executes on another thread or via the thread pool. Once the task completes, the method resumes execution, either on the same thread or on a different one.
+This is especially useful for keeping applications responsive — such as UI or web apps that need to handle many operations concurrently
 
 ---
 
