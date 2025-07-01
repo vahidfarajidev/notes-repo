@@ -29,7 +29,8 @@ public class Post
     public int BlogId { get; set; }
     public virtual Blog Blog { get; set; }
 
-    public virtual Author Author { get; set; }  // For reference loading
+    public int AuthorId { get; set; }          // Explicit foreign key
+    public virtual Author Author { get; set; } // Navigation property
 }
 
 public class Author
@@ -40,6 +41,8 @@ public class Author
     public virtual ICollection<Post> Posts { get; set; }
 }
 ```
+
+> ✅ **Note:** For any `many-to-one` or `one-to-one` relationship, it is recommended to include **both** the navigation property and the foreign key property. This improves clarity, query efficiency, and database mapping.
 
 ---
 
