@@ -77,3 +77,56 @@ IQueryable<User> users = dbContext.Users
 - Choose based on where your data lives: memory vs server
 
 Using the right interface helps you write **cleaner and more performant** applications — especially when working with databases.
+
+
+
+---
+
+## 🔍 What Does "Executes on the Data Source (Server-Side)" Mean?
+
+When we say `IQueryable<T>` executes on the data source, we mean:
+
+- The LINQ query is **not executed immediately**
+- Instead, it's **converted into a SQL query**
+- The SQL is sent to the **database**, and **only the results** are returned
+
+### ✅ Example:
+
+```csharp
+var users = dbContext.Users
+    .Where(u => u.Age > 18)
+    .Select(u => u.Name);
+```
+
+This doesn't fetch data yet — it just builds the query.
+
+Later, when you call:
+
+```csharp
+var result = users.ToList();
+```
+
+Only then the query runs, like:
+
+```sql
+SELECT Name FROM Users WHERE Age > 18
+```
+
+This means **filtering is done by the database**, not in memory.
+
+---
+
+## 🧠 In Simple Words
+
+> When you write:
+```csharp
+var users = dbContext.Users
+    .Where(u => u.Age > 18)
+    .Select(u => u.Name);
+```
+
+- It’s just **building a query**
+- No data is loaded into memory yet
+- Query executes **only when you enumerate** (`ToList()`, `First()`, `Count()`, etc.)
+
+This helps improve performance and memory usage significantly — especially with large datasets.
