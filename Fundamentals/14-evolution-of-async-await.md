@@ -11,6 +11,7 @@ Before `async/await`, devs had to use patterns like **callbacks**, **events**, o
 
 ---
 
+
 ### 🔹 1. Callbacks
 
 ```csharp
@@ -21,13 +22,16 @@ DownloadDataAsync(url, callback: result =>
 ```
 
 📌 In this pattern:
-- `DownloadDataAsync` starts a background operation
-- It **does not block** the current thread
-- When the download completes, the `callback` function runs
+- `DownloadDataAsync` starts a background operation (like downloading data)
+- It **does not block** the calling thread — the thread is **freed immediately**
+- The download happens on a **different thread or via a thread pool**
+- When the download finishes, the system invokes the `callback` function
 
-❗ Problem:
-- Code becomes deeply nested (callback hell)
-- Hard to handle errors and maintain logic flow
+🧵 What happens to the thread?
+- The **original thread returns** immediately to continue other work
+- When the operation completes, **another thread** (not necessarily the original one) picks up and executes the callback
+- You **can't assume** the callback runs on the same thread — this causes issues in UI apps (like WinForms/WPF) where UI access must be on the main thread
+
 
 ---
 
