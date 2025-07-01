@@ -127,3 +127,48 @@ public async Task<IActionResult> Index()
 | C# 5.0 onward  | `async` / `await`              | Clean, readable, efficient        |
 
 `async/await` revolutionized C# — making async programming **practical, scalable, and developer-friendly**.
+
+
+
+---
+
+## ⚠️ Note on UI Threads (WinForms/WPF)
+
+In UI frameworks like **WinForms** and **WPF**, only the **main UI thread** is allowed to update UI controls.
+
+When using callbacks or async methods:
+
+- The callback may **run on a background thread**
+- Trying to update the UI from a non-UI thread causes a runtime exception
+
+### ❌ Problematic (WinForms):
+
+```csharp
+DownloadDataAsync(url, result =>
+{
+    label1.Text = result; // ❌ Cross-thread operation error
+});
+```
+
+### ✅ Correct (WinForms):
+
+```csharp
+DownloadDataAsync(url, result =>
+{
+    this.Invoke((MethodInvoker)(() =>
+    {
+        label1.Text = result; // ✅ Safe on UI thread
+    }));
+});
+```
+
+### ✅ Correct (WPF):
+
+```csharp
+Application.Current.Dispatcher.Invoke(() =>
+{
+    myLabel.Content = result; // ✅ Safe on UI thread
+});
+```
+
+🔁 Always marshal back to the UI thread if you're updating UI elements from async code.
