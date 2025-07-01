@@ -197,7 +197,7 @@ This is especially useful for keeping applications responsive — such as UI or 
 👀 Think of it like:
 > “Pause here, let someone else use the thread, and come back when the result is ready.”
 
-##Further explanation:
+## Further explanation:
 ### 🔸 `await` pauses the method **until the awaited task completes — without blocking the thread**
 
 📌  
