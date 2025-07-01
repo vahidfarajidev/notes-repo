@@ -198,8 +198,6 @@ This is especially useful for keeping applications responsive — such as UI or 
 > “Pause here, let someone else use the thread, and come back when the result is ready.”
 
 ## Further explanation:
-### 🔸 `await` pauses the method **until the awaited task completes — without blocking the thread**
-
 📌  
 When you write `await SomeAsyncOperation()`, it means:
 
