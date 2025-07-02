@@ -106,3 +106,60 @@ Console.WriteLine(cart.Checkout(100)); // Output: 90
 > Think of a shopping app where users can have different types of discounts:  
 > no discount, seasonal percentage, or coupon code.  
 > Each strategy is plug-and-play without modifying checkout logic.
+
+
+---
+
+## 🔄 Why Use `SetDiscountStrategy()` When We Have a Constructor?
+
+The constructor lets you set an initial discount strategy:
+
+```csharp
+var cart = new ShoppingCart(new NoDiscount());
+```
+
+But `SetDiscountStrategy()` gives you flexibility to **change the strategy at runtime**:
+
+```csharp
+cart.SetDiscountStrategy(new PercentageDiscount(10));
+```
+
+### ✅ Why is this useful?
+
+Imagine a shopping app:
+- A user starts with **no discount**
+- Later, they apply a **promo code** or join a **special offer**
+
+Without `SetDiscountStrategy()`, you'd need to recreate the entire cart.  
+With it, you can **change behavior on the fly**, without modifying the client code.
+
+### 🧠 Summary:
+
+| Approach            | Benefit                                   |
+|---------------------|-------------------------------------------|
+| Constructor only     | Simple, fixed behavior                    |
+| + `SetDiscountStrategy()` | Flexible — allows runtime behavior change |
+
+This dynamic flexibility is what makes the **Strategy Pattern** so powerful.
+
+---
+
+## 🔍 Changeable vs Extensible — Strategy Pattern Benefits
+
+The Strategy Pattern offers two powerful benefits:
+
+| Feature        | What It Means                                                     |
+|----------------|-------------------------------------------------------------------|
+| 🔁 **Changeable**   | You can change the behavior **at runtime** using `SetDiscountStrategy()` |
+| 🚀 **Extensible**   | You can add **new discount types** without modifying existing code        |
+
+### 🧪 In This Example:
+
+- The `ShoppingCart` can **dynamically switch** between discount strategies  
+- You can add a new class like `HolidayDiscount` or `CouponDiscount`  
+  — without changing the `ShoppingCart` class itself
+
+This design follows the **Open/Closed Principle**:
+> **Open for extension**, but **closed for modification**
+
+✅ Strategy Pattern enables **runtime flexibility** and **codebase scalability**
