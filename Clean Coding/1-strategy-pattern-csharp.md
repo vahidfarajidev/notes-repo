@@ -9,7 +9,7 @@ It promotes **open/closed principle**: open for extension, closed for modificati
 
 ## ✅ When to Use
 
-- You have multiple ways to perform an operation (e.g., different sorting algorithms, payment methods, etc.)
+- You have multiple ways to perform an operation (e.g., different discount types, payment methods)
 - You want to change behavior at runtime without modifying the client code
 
 ---
@@ -22,51 +22,57 @@ It promotes **open/closed principle**: open for extension, closed for modificati
 
 ---
 
-## 🧪 Example: Text Formatter
+## 🧪 Example: Discount Calculation
 
 ### 1. Define the Strategy Interface
 
 ```csharp
-public interface ITextFormatter
+public interface IDiscountStrategy
 {
-    string Format(string input);
+    decimal ApplyDiscount(decimal totalAmount);
 }
 ```
 
 ### 2. Create Concrete Strategies
 
 ```csharp
-public class UpperCaseFormatter : ITextFormatter
+public class NoDiscount : IDiscountStrategy
 {
-    public string Format(string input) => input.ToUpper();
+    public decimal ApplyDiscount(decimal totalAmount) => totalAmount;
 }
 
-public class LowerCaseFormatter : ITextFormatter
+public class PercentageDiscount : IDiscountStrategy
 {
-    public string Format(string input) => input.ToLower();
+    private readonly decimal _percent;
+    public PercentageDiscount(decimal percent) => _percent = percent;
+
+    public decimal ApplyDiscount(decimal totalAmount)
+    {
+        return totalAmount - (totalAmount * _percent / 100);
+    }
 }
 ```
 
 ### 3. Create the Context
 
 ```csharp
-public class TextEditor
+public class ShoppingCart
 {
-    private ITextFormatter _formatter;
+    private IDiscountStrategy _discountStrategy;
 
-    public TextEditor(ITextFormatter formatter)
+    public ShoppingCart(IDiscountStrategy discountStrategy)
     {
-        _formatter = formatter;
+        _discountStrategy = discountStrategy;
     }
 
-    public void SetFormatter(ITextFormatter formatter)
+    public void SetDiscountStrategy(IDiscountStrategy discountStrategy)
     {
-        _formatter = formatter;
+        _discountStrategy = discountStrategy;
     }
 
-    public void Print(string text)
+    public decimal Checkout(decimal totalAmount)
     {
-        Console.WriteLine(_formatter.Format(text));
+        return _discountStrategy.ApplyDiscount(totalAmount);
     }
 }
 ```
@@ -74,11 +80,11 @@ public class TextEditor
 ### 4. Usage
 
 ```csharp
-var editor = new TextEditor(new UpperCaseFormatter());
-editor.Print("Hello World"); // Output: HELLO WORLD
+var cart = new ShoppingCart(new NoDiscount());
+Console.WriteLine(cart.Checkout(100)); // Output: 100
 
-editor.SetFormatter(new LowerCaseFormatter());
-editor.Print("Hello Again"); // Output: hello again
+cart.SetDiscountStrategy(new PercentageDiscount(10));
+Console.WriteLine(cart.Checkout(100)); // Output: 90
 ```
 
 ---
@@ -91,12 +97,12 @@ editor.Print("Hello Again"); // Output: hello again
 | Concrete     | Classes implementing the algorithm       |
 | Context      | Uses the strategy to perform the action  |
 
-✅ This pattern makes it easy to **add new behaviors** without changing existing code.
+✅ This pattern makes it easy to **add new behaviors** (like new types of discounts) without changing existing code.
 
 ---
 
 ## ✅ Real-World Analogy
 
-> Think of a navigation app:  
-> It lets you switch between car, walking, or biking routes.  
-> Each route strategy is interchangeable without changing the app UI.
+> Think of a shopping app where users can have different types of discounts:  
+> no discount, seasonal percentage, or coupon code.  
+> Each strategy is plug-and-play without modifying checkout logic.
