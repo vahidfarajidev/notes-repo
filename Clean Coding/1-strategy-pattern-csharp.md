@@ -163,3 +163,37 @@ This design follows the **Open/Closed Principle**:
 > **Open for extension**, but **closed for modification**
 
 ✅ Strategy Pattern enables **runtime flexibility** and **codebase scalability**
+
+---
+
+## 🧱 Open for Extension, Closed for Modification — In Practice
+
+This design follows the **Open/Closed Principle**:
+
+> "Software entities should be open for extension, but closed for modification."
+
+### 🧪 In This Example:
+
+- You can add new strategies like `HolidayDiscount` or `CouponDiscount`
+- You **don’t need to change** the existing `ShoppingCart` or interface code
+
+### ✅ What’s Open for Extension?
+
+- `IDiscountStrategy`: You can create many new implementations of this interface
+- `ShoppingCart`: It can work with **any** strategy passed to it — no changes required
+
+### 🔒 What’s Closed for Modification?
+
+- The `ShoppingCart` class: No need to touch it when adding new behaviors
+- Existing concrete strategies like `NoDiscount`, `PercentageDiscount`: We don't edit them, we add new ones
+
+### 📌 Summary:
+
+| Component            | Open for Extension | Closed for Modification |
+|----------------------|--------------------|--------------------------|
+| `IDiscountStrategy`  | ✅ Yes             | ✅ Yes                   |
+| `ShoppingCart`       | ✅ Yes             | ✅ Yes                   |
+| Strategy Implementations | ➕ Add new classes | ✖ Don’t modify existing ones |
+
+This is the essence of Strategy Pattern and solid design:  
+> **Add behavior without breaking or changing existing logic.**
