@@ -209,3 +209,97 @@ It gives a good balance between:
 
 - Ensuring required fields are set
 - Providing flexibility for optional ones
+
+
+
+---
+
+## 🔍 Why Are There Dots After Each Line?
+
+You might wonder why this syntax is used:
+
+```csharp
+var user = new UserProfileBuilder("Ali", "ali@example.com")
+               .WithPhone("09120000000")
+               .WithProfilePicture("ali.jpg")
+               .WithBio("C# enthusiast")
+               .Build();
+```
+
+### ✅ This style is called Fluent Interface or Method Chaining
+
+It means that each method (like `.WithPhone()`) returns the builder itself (`this`), allowing the next method to be called on the same object.
+
+### Example method:
+```csharp
+public UserProfileBuilder WithPhone(string phone)
+{
+    _user.Phone = phone;
+    return this; // returns itself for chaining
+}
+```
+
+So this line:
+
+```csharp
+new UserProfileBuilder("Ali", "ali@example.com")
+    .WithPhone("0912...")
+```
+
+Means:
+
+1. A `UserProfileBuilder` object is created
+2. `.WithPhone()` is called, modifying the object and returning it
+3. The returned builder allows `.WithBio()` to be called next
+
+---
+
+## 🧠 Why Use This?
+
+| Feature | Benefit |
+|--------|---------|
+| Fluent Style | Code reads like a sentence |
+| No repeated variables | More concise |
+| Scales well | Easy to add optional values |
+
+### 🧼 Clean and readable:
+
+This:
+
+```csharp
+var user = new UserProfileBuilder("Ali", "ali@example.com").WithPhone("0912...").WithBio("Dev").Build();
+```
+
+Is identical to:
+
+```csharp
+var user = new UserProfileBuilder("Ali", "ali@example.com")
+               .WithPhone("0912...")
+               .WithBio("Dev")
+               .Build();
+```
+
+Only difference: readability and formatting.
+
+---
+
+## 🔎 What Does `new UserProfileBuilder(...)` Return?
+
+It returns a `UserProfileBuilder` instance. So calling `.WithPhone()` immediately after works, because the object supports that method and returns itself again.
+
+```csharp
+UserProfileBuilder builder = new UserProfileBuilder(...);
+builder.WithPhone(...).WithBio(...).Build();
+```
+
+Is the same as chaining it directly.
+
+---
+
+## 📦 Summary
+
+| Concept | Explanation |
+|--------|-------------|
+| `new UserProfileBuilder(...)` | Creates a builder object |
+| `.WithXxx()` | Returns the same builder for further chaining |
+| `Build()` | Produces the final `UserProfile` object |
