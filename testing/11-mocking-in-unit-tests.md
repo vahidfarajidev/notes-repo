@@ -1,3 +1,4 @@
+
 # 🧪 Mocking Dependencies in Unit Testing (C#)
 
 In unit testing, we often want to **isolate** the unit under test from its external dependencies. That’s where **mocking** comes in.
@@ -37,9 +38,9 @@ Mocking is the practice of **replacing real objects with controlled, fake versio
 
 ---
 
-## 🔍 Example with Moq
+## 🔍 Example with NSubstitute
 
-### Let's say we have this interface:
+### Suppose we have the following interface:
 
 ```csharp
 public interface IEmailService
@@ -48,7 +49,7 @@ public interface IEmailService
 }
 ```
 
-### And we want to test this class:
+### And this class under test:
 
 ```csharp
 public class Notification
@@ -70,10 +71,10 @@ public class Notification
 }
 ```
 
-### ✅ Unit Test using Moq:
+### ✅ Unit Test using NSubstitute:
 
 ```csharp
-using Moq;
+using NSubstitute;
 using Xunit;
 
 public class NotificationTests
@@ -82,14 +83,14 @@ public class NotificationTests
     public void Should_Send_Email_When_Email_Is_Valid()
     {
         // Arrange
-        var mockEmail = new Mock<IEmailService>();
-        var notification = new Notification(mockEmail.Object);
+        var mockEmail = Substitute.For<IEmailService>();
+        var notification = new Notification(mockEmail);
 
         // Act
         notification.Notify("test@example.com");
 
         // Assert
-        mockEmail.Verify(e => e.SendEmail("test@example.com", "Welcome!"), Times.Once);
+        mockEmail.Received(1).SendEmail("test@example.com", "Welcome!");
     }
 }
 ```
@@ -99,13 +100,10 @@ public class NotificationTests
 ## 🧠 Summary
 
 - Mocking allows us to **test in isolation**
-- Use tools like **Moq** to create fake versions of services
-- You can verify **calls** and **parameters**
-- Helps you **decouple** logic from infrastructure
+- Tools like **NSubstitute** provide friendly APIs
+- You can easily verify calls and simulate behavior
+- Clean, expressive, and test-friendly syntax
 
 ---
 
-Let me know if you'd like to extend this to:
-- Async method mocking
-- Mocking return values
-- Behavior verification
+Let me know if you’d like to explore async mocking or exception testing too!
