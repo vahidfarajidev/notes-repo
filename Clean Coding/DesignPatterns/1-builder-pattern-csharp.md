@@ -303,3 +303,32 @@ Is the same as chaining it directly.
 | `new UserProfileBuilder(...)` | Creates a builder object |
 | `.WithXxx()` | Returns the same builder for further chaining |
 | `Build()` | Produces the final `UserProfile` object |
+
+
+
+---
+
+## 📌 Note: What If There Are More Required Fields?
+
+If additional fields (besides `Name` and `Email`) are **required**, they should also go in the constructor of the builder.
+
+Example:
+
+```csharp
+public UserProfileBuilder(string name, string email, DateTime birthDate)
+{
+    _user = new UserProfile
+    {
+        Name = name,
+        Email = email,
+        BirthDate = birthDate
+    };
+}
+```
+
+This ensures that all essential fields are provided at the time of building the object and prevents the creation of incomplete instances.
+
+| Field Type  | How to Provide   | Why?                             |
+|-------------|------------------|----------------------------------|
+| Required    | Constructor      | Object is invalid without them   |
+| Optional    | Fluent methods   | Included only when needed        |
