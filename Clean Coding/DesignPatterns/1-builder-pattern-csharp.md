@@ -16,106 +16,100 @@ from its representation — so the same construction process can create differen
 ## 🧱 Basic Structure
 
 - **Product**: The complex object being built
-- **Builder**: Interface or abstract class with build steps
-- **ConcreteBuilder**: Implements the steps
-- **Director** (optional): Orchestrates the building steps
+- **Builder**: Provides methods for setting parts of the product
+- **ConcreteBuilder**: Implements the step-by-step logic
+- **Build()**: Returns the final object
 
 ---
 
-## 🧪 Example: Building a Meal
+## 🧪 Example: Building a User Profile
 
 ### 1. Define the Product
 
 ```csharp
-public class Meal
+public class UserProfile
 {
-    public string Main { get; set; }
-    public string Side { get; set; }
-    public string Drink { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string Phone { get; set; }
+    public string ProfilePicture { get; set; }
+    public string Bio { get; set; }
 
     public override string ToString()
     {
-        return $"Main: {Main}, Side: {Side}, Drink: {Drink}";
+        return $"Name: {Name}, Email: {Email}, Phone: {Phone}, Picture: {ProfilePicture}, Bio: {Bio}";
     }
 }
 ```
 
-### 2. Define the Builder Interface
+### 2. Create the Builder
 
 ```csharp
-public interface IMealBuilder
+public class UserProfileBuilder
 {
-    void BuildMain();
-    void BuildSide();
-    void BuildDrink();
-    Meal GetMeal();
-}
-```
+    private readonly UserProfile _user;
 
-### 3. Create a Concrete Builder
-
-```csharp
-public class VegMealBuilder : IMealBuilder
-{
-    private Meal _meal = new Meal();
-
-    public void BuildMain() => _meal.Main = "Grilled Tofu";
-    public void BuildSide() => _meal.Side = "Salad";
-    public void BuildDrink() => _meal.Drink = "Orange Juice";
-    public Meal GetMeal() => _meal;
-}
-```
-
-### 4. Create the Director (Optional)
-
-```csharp
-public class MealDirector
-{
-    private IMealBuilder _builder;
-
-    public MealDirector(IMealBuilder builder)
+    public UserProfileBuilder(string name, string email)
     {
-        _builder = builder;
+        _user = new UserProfile
+        {
+            Name = name,
+            Email = email
+        };
     }
 
-    public Meal ConstructMeal()
+    public UserProfileBuilder WithPhone(string phone)
     {
-        _builder.BuildMain();
-        _builder.BuildSide();
-        _builder.BuildDrink();
-        return _builder.GetMeal();
+        _user.Phone = phone;
+        return this;
     }
+
+    public UserProfileBuilder WithProfilePicture(string path)
+    {
+        _user.ProfilePicture = path;
+        return this;
+    }
+
+    public UserProfileBuilder WithBio(string bio)
+    {
+        _user.Bio = bio;
+        return this;
+    }
+
+    public UserProfile Build() => _user;
 }
 ```
 
-### 5. Usage
+### 3. Usage
 
 ```csharp
-var builder = new VegMealBuilder();
-var director = new MealDirector(builder);
-var meal = director.ConstructMeal();
+var user = new UserProfileBuilder("Ali", "ali@example.com")
+               .WithPhone("09120000000")
+               .WithProfilePicture("ali.jpg")
+               .WithBio("C# enthusiast")
+               .Build();
 
-Console.WriteLine(meal); 
-// Output: Main: Grilled Tofu, Side: Salad, Drink: Orange Juice
+Console.WriteLine(user);
+// Output:
+// Name: Ali, Email: ali@example.com, Phone: 09120000000, Picture: ali.jpg, Bio: C# enthusiast
 ```
 
 ---
 
 ## 🧠 Summary
 
-| Role           | Responsibility                    |
-|----------------|------------------------------------|
-| Product        | The object being built             |
-| Builder        | Defines the steps to build product |
-| ConcreteBuilder| Implements the build steps         |
-| Director       | Optional — guides the build process|
+| Role         | Responsibility                          |
+|--------------|------------------------------------------|
+| Product      | The object being built                   |
+| Builder      | Provides fluent methods for building     |
+| Build()      | Returns the final object                 |
 
-✅ The Builder Pattern makes it easier to build complex objects step-by-step and improves code clarity.
+✅ This pattern improves clarity and allows step-by-step object creation with clean syntax.
 
 ---
 
 ## ✅ Real-World Analogy
 
-> Think of ordering a custom meal:  
-> You can specify the main dish, a side, and a drink — all customized.  
-> The builder handles step-by-step construction so the result is always valid and consistent.
+> Like filling out a profile on a website step-by-step:  
+> Name and email are required, while other fields are optional.  
+> The builder helps organize and construct the complete profile clearly.
