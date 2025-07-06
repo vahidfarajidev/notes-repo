@@ -144,4 +144,51 @@ public async Task POST_Login_Should_ReturnToken_When_ValidCredentials()
 
 ---
 
-Let me know if you want a working sample project for this structure 🔧
+
+
+---
+
+## 🧪 Does Integration Test Actually Save to a Database?
+
+Yes — but it's **not a real database**.
+
+### 📌 Example:
+```csharp
+[Fact]
+public async Task GetUserName_Should_ReturnCorrectName_When_UserExists()
+{
+    using var context = new AppDbContext(_options);
+    context.Users.Add(new User { Id = 1, Name = "Sara" });
+    await context.SaveChangesAsync();
+
+    var repo = new EfUserRepository(context);
+    var name = repo.GetUserName(1);
+
+    Assert.Equal("Sara", name);
+}
+```
+
+### ✅ What's happening here?
+- A new `AppDbContext` is created
+- A user is added
+- `SaveChangesAsync` is called
+
+It looks like real database interaction — but it uses **In-Memory Database** via EF Core.
+
+### 🔧 Setup for In-Memory:
+```csharp
+var options = new DbContextOptionsBuilder<AppDbContext>()
+    .UseInMemoryDatabase("TestDb")
+    .Options;
+```
+
+### 🧠 Summary:
+
+| Aspect | Answer |
+|--------|--------|
+| Does it really save data? | ✅ Yes, in memory only |
+| Does it need a physical DB? | ❌ No |
+| Is this an Integration Test? | ✅ Yes |
+| Is this a Unit Test? | ❌ No, because it depends on EF Core |
+
+This approach helps isolate your infrastructure logic **without the overhead of a real database**.
