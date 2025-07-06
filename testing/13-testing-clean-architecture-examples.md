@@ -1,78 +1,194 @@
-# Factory Method Pattern in C#
+# 🧪 Testing in Clean Architecture
 
-## Introduction
+In Clean Architecture, responsibilities are separated into distinct layers, and the **type of test** you write depends on which layer you're testing.
 
-The Factory Method Pattern is a **creational design pattern** used to encapsulate object creation logic. It's especially useful when:
+---
 
-- A class has a `private` constructor.
-- You want to control the way objects are created.
-- You aim for **loose coupling** between object creation and usage.
+## 🧱 1. Domain Layer — Unit Tests
 
-## Why Use It?
+- 💡 Purpose: Test pure business logic.
+- ✅ Should not depend on any infrastructure (e.g., database, web, etc.)
 
-If a class has a `private` constructor, it cannot be instantiated using `new` from outside the class. In such cases, a **factory method** offers a controlled and centralized way to create instances.
-
-## Basic Structure with Benefits
+### Example: `OrderTests.cs`
 
 ```csharp
-public class User
+public class Order
 {
-    public string Name { get; private set; }
-    public string Role { get; private set; }
+    public decimal TotalPrice { get; private set; }
+    public decimal Discount { get; private set; }
 
-    // Private constructor
-    private User(string name, string role)
+    public void ApplyDiscount(decimal discount)
     {
-        Name = name;
-        Role = role;
-    }
+        if (discount < 0 || discount > TotalPrice)
+            throw new ArgumentException("Invalid discount");
 
-    // Factory method with encapsulated logic, validation, and flexibility
-    public static User Create(string name, string role)
-    {
-        // Validation: Ensure role is valid
-        var allowedRoles = new[] { "Admin", "Guest", "Member" };
-        if (!allowedRoles.Contains(role))
-        {
-            throw new ArgumentException("Invalid role");
-        }
-
-        // Flexibility: Different logic per role
-        if (role == "Admin")
-        {
-            // Custom logic for Admin
-            Console.WriteLine("Admin privileges granted.");
-        }
-
-        return new User(name, role); // Encapsulation: Creation logic is hidden
+        Discount = discount;
     }
 }
 ```
 
-### Usage
+#### ✅ Unit Test:
 
 ```csharp
-try
+public class OrderTests
 {
-    User user = User.Create("Alice", "Admin");
-    Console.WriteLine($"{user.Name} - {user.Role}");
-}
-catch (Exception ex)
-{
-    Console.WriteLine(ex.Message);
+    [Fact]
+    public void ApplyDiscount_Should_SetDiscount_When_ValidAmount()
+    {
+        var order = new Order();
+        order.ApplyDiscount(10);
+        Assert.Equal(10, order.Discount);
+    }
 }
 ```
 
-## Benefits Demonstrated
+---
 
-- **Encapsulation**: The constructor is private; object creation is done only through the factory.
-- **Validation**: Role is checked before the object is created.
-- **Flexibility**: Custom logic is executed based on the role provided (e.g., logging or permission setup).
+## 🧱 2. Application Layer — Integration or Unit
 
-## Real-Life Analogy
+- 💡 Purpose: Coordinates use cases.
+- May depend on domain, repositories, services.
 
-Think of a **coffee shop**. You can't make the coffee yourself (constructor is private), but you can order one from the counter (factory method). Depending on what you order (role), the barista may make it differently.
+You can write **unit tests with mocks**, or go **integration** if you want real DB/API.
 
-## Conclusion
+### Example: `UserService.cs`
 
-The Factory Method Pattern is simple but powerful. It gives you full control over instance creation and enforces constraints while keeping your code clean and maintainable.
+```csharp
+public class UserService
+{
+    private readonly IUserRepository _repo;
+
+    public UserService(IUserRepository repo)
+    {
+        _repo = repo;
+    }
+
+    public string GetWelcomeMessage(int userId)
+    {
+        var name = _repo.GetUserName(userId);
+        return $"Welcome, {name}";
+    }
+}
+```
+
+#### ✅ Unit Test (with mock):
+
+```csharp
+[Fact]
+public void GetWelcomeMessage_Should_ReturnMessage_When_UserExists()
+{
+    var repo = Substitute.For<IUserRepository>();
+    repo.GetUserName(1).Returns("Ali");
+
+    var service = new UserService(repo);
+    var result = service.GetWelcomeMessage(1);
+
+    result.Should().Be("Welcome, Ali");
+}
+```
+
+---
+
+## 🧱 3. Infrastructure Layer — Integration Tests
+
+- 💡 Purpose: Actual file system, database, etc.
+- ❌ Don’t write unit tests here — integration only.
+
+### Example: `EfUserRepositoryTests.cs`
+
+```csharp
+[Fact]
+public async Task GetUserName_Should_ReturnCorrectName_When_UserExists()
+{
+    using var context = new AppDbContext(_options);
+    context.Users.Add(new User { Id = 1, Name = "Sara" });
+    await context.SaveChangesAsync();
+
+    var repo = new EfUserRepository(context);
+    var name = repo.GetUserName(1);
+
+    Assert.Equal("Sara", name);
+}
+```
+
+---
+
+## 🧱 4. API Layer — End-to-End / Integration Tests
+
+- 💡 Purpose: Ensure endpoints work with real pipeline.
+- Use **TestServer/WebApplicationFactory** in ASP.NET Core.
+
+```csharp
+[Fact]
+public async Task POST_Login_Should_ReturnToken_When_ValidCredentials()
+{
+    var client = _factory.CreateClient();
+    var response = await client.PostAsJsonAsync("/api/login", new { username = "admin", password = "123" });
+
+    response.EnsureSuccessStatusCode();
+    var token = await response.Content.ReadAsStringAsync();
+    token.Should().NotBeNullOrEmpty();
+}
+```
+
+---
+
+## 🧠 Summary Table
+
+| Layer           | Recommended Test       | Mock?        | Touch DB?  |
+|----------------|------------------------|--------------|------------|
+| Domain         | ✅ Unit Test            | ❌ No        | ❌ No       |
+| Application    | ✅ Unit / 🔁 Integration| ✅ Yes (unit)| 🔁 Maybe    |
+| Infrastructure | ❌ Unit / ✅ Integration| ❌ No        | ✅ Yes      |
+| API            | ✅ End-to-End Test      | ❌ No        | ✅ Yes      |
+
+---
+
+
+
+---
+
+## 🧪 Does Integration Test Actually Save to a Database?
+
+Yes — but it's **not a real database**.
+
+### 📌 Example:
+```csharp
+[Fact]
+public async Task GetUserName_Should_ReturnCorrectName_When_UserExists()
+{
+    using var context = new AppDbContext(_options);
+    context.Users.Add(new User { Id = 1, Name = "Sara" });
+    await context.SaveChangesAsync();
+
+    var repo = new EfUserRepository(context);
+    var name = repo.GetUserName(1);
+
+    Assert.Equal("Sara", name);
+}
+```
+
+### ✅ What's happening here?
+- A new `AppDbContext` is created
+- A user is added
+- `SaveChangesAsync` is called
+
+It looks like real database interaction — but it uses **In-Memory Database** via EF Core.
+
+### 🔧 Setup for In-Memory:
+```csharp
+var options = new DbContextOptionsBuilder<AppDbContext>()
+    .UseInMemoryDatabase("TestDb")
+    .Options;
+```
+
+### 🧠 Summary:
+
+| Aspect | Answer |
+|--------|--------|
+| Does it really save data? | ✅ Yes, in memory only |
+| Does it need a physical DB? | ❌ No |
+| Is this an Integration Test? | ✅ Yes |
+| Is this a Unit Test? | ❌ No, because it depends on EF Core |
+
+This approach helps isolate your infrastructure logic **without the overhead of a real database**.
