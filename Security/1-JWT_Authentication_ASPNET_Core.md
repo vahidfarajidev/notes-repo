@@ -41,9 +41,9 @@ SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 
 ## Why Use JWT?
 
-- **Stateless**: No session is stored on the server.
-- **Scalable**: Perfect for microservices and distributed systems.
-- **Compact**: Efficient for transmission over HTTP.
+- **Stateless**: No session is stored on the server. Each request carries all necessary information, making the system easier to scale and deploy across multiple servers. All the required user information is encoded in the token itself and sent with each request. This eliminates the need for server-side session storage, allowing easy deployment across multiple servers without session synchronization.
+- **Scalable**: Perfect for microservices and distributed systems. Since there's no dependency on a central session store, JWT is ideal for distributed architectures such as microservices or cloud-native applications.
+- **Compact**: Efficient for transmission over HTTP. JWTs are small in size, encoded in Base64URL format, and can be easily transmitted via HTTP headers. This makes them efficient for APIs and mobile applications.
 
 ---
 
