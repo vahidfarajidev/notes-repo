@@ -76,6 +76,29 @@ When the server receives a JWT, it re-generates the signature using the same sec
 
 ---
 
+
+---
+
+## How Is the Signature Created?
+
+The signature in a JWT is what guarantees that the token hasn't been tampered with. It's generated using the following components:
+
+1. **Header + Payload**: These are encoded using Base64URL and concatenated with a dot:
+   ```
+   base64UrlEncode(header) + "." + base64UrlEncode(payload)
+   ```
+
+2. **A Secret Key**: A private key known only to the server. This is used to sign the token.
+
+3. **A Hashing Algorithm**: Such as `HMAC SHA-256`. It generates a unique signature (like a fingerprint) based on the header, payload, and secret.
+
+If any part of the token is modified (even a single character), the signature validation will fail when checked by the server, and the token will be rejected.
+
+### Analogy
+
+Think of the signature like a wax seal on a letter. Everyone can read the letter (it's not encrypted), but only the person with the original seal (secret key) can produce a valid one. If someone tampers with the contents and reseals it without the correct seal, it's obvious it's been tampered with.
+
+
 ## Conclusion
 
 JWTs are not meant to hide information — they are meant to **prove authenticity**. While the contents are readable, the signature ensures they haven’t been tampered with.
