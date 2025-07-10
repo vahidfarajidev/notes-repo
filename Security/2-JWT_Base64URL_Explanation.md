@@ -99,6 +99,108 @@ If any part of the token is modified (even a single character), the signature va
 Think of the signature like a wax seal on a letter. Everyone can read the letter (it's not encrypted), but only the person with the original seal (secret key) can produce a valid one. If someone tampers with the contents and reseals it without the correct seal, it's obvious it's been tampered with.
 
 
+
+---
+
+## How Does HMAC SHA-256 Work in JWT?
+
+When creating the signature part of a JWT, we use an algorithm like `HMAC SHA-256`. This process ensures the token hasn’t been altered. Let’s break it down step-by-step.
+
+### 🔢 Step-by-Step Signature Creation
+
+#### 1. Prepare the Header and Payload
+
+Convert both to JSON and then Base64URL-encode them:
+
+```json
+Header:
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+Payload:
+{
+  "sub": "1234567890",
+  "name": "John Doe",
+  "iat": 1516239022
+}
+```
+
+After encoding:
+
+```text
+encodedHeader  = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+encodedPayload = eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ
+```
+
+#### 2. Create the String to Sign
+
+Join the two encoded strings with a dot (`.`):
+
+```text
+dataToSign = encodedHeader + "." + encodedPayload
+```
+
+Example:
+
+```text
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ
+```
+
+#### 3. Apply HMAC SHA-256
+
+Now we generate a signature using:
+
+```text
+signature = HMAC_SHA256(dataToSign, secretKey)
+```
+
+- **dataToSign** is the string above
+- **secretKey** is a private key that only the server knows (e.g., `"my_super_secret_key"`)
+
+This results in a binary signature, which is then Base64URL-encoded to create the final signature string.
+
+Example (simplified):
+
+```text
+SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+```
+
+#### 4. Final JWT Token
+
+Now you can build the complete JWT:
+
+```text
+encodedHeader + "." + encodedPayload + "." + encodedSignature
+```
+
+---
+
+## 🔐 What Is the Role of `secretKey`?
+
+The `secretKey` is critical. It ensures that only the server (who knows the key) can create or validate a valid signature.
+
+If someone changes the payload, they can’t generate a matching signature without knowing the secret key.
+
+### Analogy
+
+Think of the `secretKey` like a stamp only the server has. If someone tampers with the document, they can’t reproduce the original stamp — and the forgery is detected immediately.
+
+---
+
+## 🧪 Summary Table
+
+| Component     | Purpose                                          | Example                                                  |
+|---------------|--------------------------------------------------|----------------------------------------------------------|
+| Header        | Metadata about algorithm and token type         | `{ "alg": "HS256", "typ": "JWT" }`                      |
+| Payload       | User data or claims                             | `{ "sub": "1234567890", "name": "John Doe" }`           |
+| Secret Key    | Used in signature generation                     | `"my_super_secret_key"`                                 |
+| Signature     | Ensures integrity and authenticity               | `HMAC_SHA256(header.payload, secretKey)` → base64url    |
+
+---
+
+
 ## Conclusion
 
 JWTs are not meant to hide information — they are meant to **prove authenticity**. While the contents are readable, the signature ensures they haven’t been tampered with.
