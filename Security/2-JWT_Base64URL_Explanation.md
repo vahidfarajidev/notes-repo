@@ -161,6 +161,10 @@ signature = HMAC_SHA256(dataToSign, secretKey)
 
 This results in a binary signature, which is then Base64URL-encoded to create the final signature string.
 
+```text
+encodedSignature = Base64UrlEncode(signature)
+```
+
 Example (simplified):
 
 ```text
