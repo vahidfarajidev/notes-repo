@@ -106,6 +106,9 @@ Think of the signature like a wax seal on a letter. Everyone can read the letter
 
 When creating the signature part of a JWT, we use an algorithm like `HMAC SHA-256`. This process ensures the token hasn’t been altered. Let’s break it down step-by-step.
 
+HMAC is a way to create a secure digital signature using a secret key and a hash function (like SHA-256).
+It ensures that the message hasn't been tampered with and was created by someone who knows the secret key.
+
 ### 🔢 Step-by-Step Signature Creation
 
 #### 1. Prepare the Header and Payload
