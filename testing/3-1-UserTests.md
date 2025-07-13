@@ -1,10 +1,21 @@
-# Unit Test Explanation for `User.Create` Validation
+# Understanding `[Theory]` vs `[Fact]` in xUnit with a Practical Example
 
-This document explains the purpose and behavior of the following unit test, written using the xUnit testing framework in C#.
+This document explains the difference between `[Theory]` and `[Fact]` attributes in the xUnit testing framework in C#, using a real-world validation example.
 
 ---
 
-## 🧪 Test Code
+## 🔍 `[Theory]` vs `[Fact]`
+
+| Attribute | Purpose                                               | Example Use Case                        |
+|----------|--------------------------------------------------------|------------------------------------------|
+| `[Fact]` | Used for a single, simple test with no input parameters | Checking a fixed behavior                |
+| `[Theory]` | Used for parameterized tests that run with multiple data sets | Validating input with different values |
+
+---
+
+## 🧪 Example: User Name Validation
+
+The following test ensures the `User.Create` method throws an exception when an invalid name is provided.
 
 ```csharp
 [Theory]
@@ -22,61 +33,40 @@ public void Create_Should_ThrowException_When_NameIsInvalid(string invalidName)
 }
 ```
 
----
+### 🔄 Why Use `[Theory]` Here?
 
-## 🧩 Explanation of Attributes
+Using `[Theory]` allows this test method to run **multiple times**, each time with a different value from the `[InlineData]` attributes.
 
-### `[Theory]`
-- Indicates that this test method is a parameterized test.
-- It will run **once for each** `[InlineData]` provided.
-
-### `[InlineData(...)]`
-Each `InlineData` provides a different input to the test method:
-
-| Value         | Description                        |
-|---------------|------------------------------------|
-| `null`        | No value provided (null reference) |
-| `""`          | An empty string                    |
-| `"   "`       | A whitespace-only string           |
-
-Thus, this test will execute **three times**, once with each invalid name input.
+This is more efficient and expressive than writing three separate `[Fact]` tests for each invalid input.
 
 ---
 
-## 🧪 Test Logic Breakdown
+## 🧩 Explanation of `[InlineData]`
 
-```csharp
-Action act = () => User.Create(invalidName, "ali@example.com");
-```
+Each `[InlineData]` provides a specific invalid input:
 
-- An `Action` delegate is created to call `User.Create` with the `invalidName` and a sample email.
-- This allows us to **assert that an exception is thrown** when the input is invalid.
+- `null` → No value provided
+- `""` → Empty string
+- `"   "` → String with only whitespace
+
+This simulates common real-world input validation cases.
 
 ---
 
-## ✅ Assertion
+## ✅ Assertion Logic
 
 ```csharp
 act.Should().Throw<ArgumentException>()
    .WithMessage("Name is required");
 ```
 
-This line uses **FluentAssertions** to verify that:
+This uses **FluentAssertions** to ensure:
 
 - An `ArgumentException` is thrown.
-- The error message matches `"Name is required"`.
+- The exception message matches `"Name is required"`.
 
 ---
 
-## 🎯 Purpose of This Test
+## 🎯 Conclusion
 
-To ensure that the `User.Create` method:
-
-- Validates the `name` parameter properly.
-- Throws an appropriate exception with a clear message when the name is `null`, empty, or whitespace.
-
----
-
-## 📌 Notes
-
-Make sure that the `User.Create` method internally checks for invalid names and throws an `ArgumentException` with the message `"Name is required"` accordingly.
+This test effectively demonstrates how `[Theory]` and `[InlineData]` are used to test **multiple input scenarios** efficiently. Use `[Fact]` for single-scenario tests, and `[Theory]` for data-driven testing.
