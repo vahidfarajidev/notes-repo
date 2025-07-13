@@ -1,65 +1,76 @@
-# ✅ Understanding Controller Tests with Mocked Services
 
-In this test:
+# 🧪 Mocked Controller Test — What Actually Runs?
 
-```csharp
-var controller = new UsersController(mockService);
-var result = controller.Add(dto);
-```
-
-### ❓ Does `UsersController.Add()` really get executed?
-
-✅ **Yes** — the method `Add()` inside `UsersController` is executed for real.
-
----
-
-### ❌ What does *not* get executed?
-
-This line inside the controller:
+Assume you have the following controller:
 
 ```csharp
-_service.AddUser(dto);
-```
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Application;
 
-- It’s just **called**, but **not really executed**, because `mockService` is a **substitute** (fake).
-- It only tracks that it was **invoked**, but its **logic does not run**.
-
----
-
-### 🔍 So what actually happens?
-
-| Part                            | Executed? | Explanation                                                  |
-|----------------------------------|-----------|--------------------------------------------------------------|
-| `UsersController.Add(dto)`      | ✅ Yes    | The controller action runs completely.                      |
-| `mockService.AddUser(dto)`      | ❌ No     | It’s a mock — the method is *called* but not executed.       |
-| `Received().AddUser(dto)`       | 🔍 Check  | Only checks that the method was called — no real behavior.   |
-
----
-
-### 💡 Example for clarity
-
-**Controller Code:**
-```csharp
-[HttpPost]
-public IActionResult Add(AddUserDto dto)
+namespace EndpointApi.Controllers
 {
-    _service.AddUser(dto); // Called but not executed if it's mocked
-    return Ok(); // This line really runs
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
+    {
+        private readonly UserService _service;
+
+        public UsersController(UserService service)
+        {
+            _service = service;
+        }
+
+        [HttpPost]
+        public IActionResult Add(AddUserDto dto)
+        {
+            _service.AddUser(dto);
+            return Ok();
+        }
+    }
 }
 ```
 
-**Test Code:**
+Now imagine this test:
+
 ```csharp
-var mockService = Substitute.For<IUserService>();
-var controller = new UsersController(mockService);
+[Fact]
+public void Add_Should_Call_Service()
+{
+    var mockService = Substitute.For<IUserService>();
+    var controller = new UsersController(mockService);
 
-var dto = new AddUserDto { Name = "Ali", Email = "ali@example.com" };
-var result = controller.Add(dto);  // ← This method runs
+    var dto = new AddUserDto { Name = "Ali", Email = "ali@example.com" };
+    var result = controller.Add(dto);
 
-result.Should().BeOfType<OkResult>();
-mockService.Received().AddUser(dto);  // ← Only verifies it was called
+    result.Should().BeOfType<OkResult>();
+    mockService.Received().AddUser(dto);
+}
 ```
 
 ---
 
-If you want to write a test that **actually executes `AddUser()` logic** instead of mocking it (i.e., an **Integration Test**), just let me know — I can provide that too.
+## ✅ What gets executed?
+
+- `controller.Add(dto)` is **actually executed**.
+- Inside that method, `_service.AddUser(dto)` is **called**, but not really executed.
+  - Why? Because `mockService` is a fake (substitute), created with `NSubstitute`.
+
+### 🔍 What happens with `mockService.AddUser(dto)`?
+
+- The method is *called*, but its internal logic is not executed.
+- It’s just **recorded** so we can verify that it was called later with `.Received()`.
+
+---
+
+## ✅ Summary
+
+| Part | Executed? | Explanation |
+|------|-----------|-------------|
+| `UsersController.Add(dto)` | ✅ Yes | The real method is executed |
+| `_service.AddUser(dto)`   | ❌ No  | Called, but it's a mocked dependency |
+| `mockService.Received().AddUser(dto)` | 🔍 Just verifies the call | Doesn't run any logic |
+
+This is typical of a **unit test for the controller**, where we don't test the logic of the service itself.
+
+If you want to write an integration test that executes the actual service logic, let me know!
