@@ -1,3 +1,24 @@
+```
+public class UserService : IUserService
+{
+    private readonly IUserRepository _repo;
+    private readonly IUnitOfWork _unitOfWork;
+
+    public UserService(IUserRepository repo, IUnitOfWork unitOfWork)
+    {
+        _repo = repo;
+        _unitOfWork = unitOfWork;
+    }
+
+    public void AddUser(AddUserDto dto)
+    {
+        var user = User.Create(dto.Name, dto.Email);
+        _repo.Add(user);
+        _unitOfWork.Commit();
+    }
+}
+```
+
 
 # 🧪 Mocked Controller Test — What Actually Runs?
 
