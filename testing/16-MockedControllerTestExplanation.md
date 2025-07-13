@@ -1,3 +1,5 @@
+# 🧪 Mocked Controller Test — What Actually Runs?
+
 ```
 public class UserService : IUserService
 {
@@ -19,8 +21,6 @@ public class UserService : IUserService
 }
 ```
 
-
-# 🧪 Mocked Controller Test — What Actually Runs?
 
 Assume you have the following controller:
 
