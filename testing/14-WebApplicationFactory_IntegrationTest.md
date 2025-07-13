@@ -59,3 +59,14 @@ In contrast to unit tests (which isolate components and mock dependencies), inte
 ## 🧪 Bonus Tip
 
 If you're using `WebApplicationFactory` with an in-memory EF Core database and real HTTP calls, you're getting **very close to end-to-end** (E2E) behavior — just without a browser.
+
+---
+
+## 📎 Note: Minimal Hosting and WebApplicationFactory
+
+In .NET 6+ (including .NET 9), if you're using Minimal Hosting (`var builder = WebApplication.CreateBuilder(args);`), the `Program` class becomes **implicit** and cannot be found by `WebApplicationFactory<T>`.
+
+✅ **Fix**: Add the following to the end of your `Program.cs` file:
+
+```csharp
+public partial class Program { } // for WebApplicationFactory
