@@ -8,17 +8,17 @@ This document explains the purpose and role of the following key elements in an 
 
 ```csharp
 // Register EF Core DbContext with SQL Server
-builder.Services.AddDbContext<AuthDbContext>(options =>
+builder.Services.AddDbContext<YourDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 ```
 
 ### 🔍 What does this line do?
 
-- **Registers `AuthDbContext` with the dependency injection (DI) container.**
+- **Registers `YourDbContext` with the dependency injection (DI) container.**
 - Configures it to use **SQL Server** as the database provider.
 - Reads the **connection string** from `appsettings.json` under the key `"ConnectionStrings:DefaultConnection"`.
 
-> Without this line, the application won’t know how to instantiate `AuthDbContext`, and runtime or migration operations will fail.
+> Without this line, the application won’t know how to instantiate `YourDbContext`, and runtime or migration operations will fail.
 
 ---
 
