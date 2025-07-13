@@ -79,3 +79,22 @@ dotnet add package Microsoft.EntityFrameworkCore.Design
 | `Update-Database` | Applies migrations and updates the actual database |
 
 This setup enables EF Core to act as the data access layer for your ASP.NET Core app using SQL Server.
+
+
+---
+
+## 💡 Running Migrations without CLI (Visual Studio Only)
+
+If you're using Visual Studio, you can run EF Core migrations via **Package Manager Console**:
+
+1. Open from `Tools → NuGet Package Manager → Package Manager Console`.
+2. Run:
+
+```powershell
+Add-Migration InitialCreate
+Update-Database
+```
+
+These commands do the same job as the CLI but inside the Visual Studio IDE.
+
+---
