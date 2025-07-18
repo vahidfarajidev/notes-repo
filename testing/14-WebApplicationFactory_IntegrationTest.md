@@ -72,3 +72,71 @@ In .NET 6+ (including .NET 9), if you're using Minimal Hosting (`var builder = W
 public partial class Program { } // for WebApplicationFactory
 
 ```
+
+
+# Overriding Services in Integration Testing: `Program.cs` vs `CustomWebApplicationFactory`
+
+In ASP.NET Core applications, dependency injection (DI) is configured in `Program.cs` for the actual application runtime. However, in integration testing scenarios, we often need to override these services—for example, to use an in-memory database instead of a real one.
+
+This article explains the difference between defining services in `Program.cs` and overriding them in `CustomWebApplicationFactory`.
+
+---
+
+## 🎯 Purpose
+
+| File | Purpose |
+|------|---------|
+| `Program.cs` | Configures services for the actual app (Development, Production) |
+| `CustomWebApplicationFactory` | Overrides certain services for testing (e.g., swap SQL Server with InMemory DB) |
+
+---
+
+## ✅ What Goes in `Program.cs`
+
+```csharp
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, EfUserRepository>();
+builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("Default")));
+```
+
+> These are the real services used in the live application.
+
+---
+
+## 🔁 What Happens in `CustomWebApplicationFactory`
+
+```csharp
+builder.ConfigureServices(services =>
+{
+    var descriptor = services.SingleOrDefault(
+        d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+    if (descriptor != null)
+        services.Remove(descriptor);
+
+    services.AddDbContext<AppDbContext>(options =>
+    {
+        options.UseInMemoryDatabase("TestDb");
+    });
+});
+```
+
+> This ensures that during integration tests, a lightweight in-memory database is used.
+
+---
+
+## 💡 Why This Separation is Important
+
+- Prevents production code from using test-only configurations.
+- Keeps tests isolated and fast.
+- Follows the single-responsibility principle: production code remains clean, while test configuration is handled separately.
+
+---
+
+## ✅ Summary
+
+- Always define your actual services in `Program.cs`.
+- Use `CustomWebApplicationFactory` to override them for test purposes.
+- This makes your application clean, testable, and maintainable.
