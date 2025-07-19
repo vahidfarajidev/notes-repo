@@ -93,8 +93,23 @@ Validate **controller behavior** under specific business scenarios such as inval
 
 ### ✅ Example
 ```csharp
-var response = await client.PutAsJsonAsync("/api/users/1", dtoWithDifferentId);
-response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+[Fact]
+public async Task Edit_Should_Return_BadRequest_When_IdMismatch()
+{
+    await using var factory = new CustomWebApplicationFactory<Program>();
+    var client = factory.CreateClient();
+
+    var dto = new EditUserDto
+    {
+        Id = Guid.NewGuid(),
+        Name = "Mismatch",
+        Email = "mismatch@example.com"
+    };
+
+    var response = await client.PutAsJsonAsync($"/api/users/{Guid.NewGuid()}", dto);
+
+    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+}
 ```
 
 ---
