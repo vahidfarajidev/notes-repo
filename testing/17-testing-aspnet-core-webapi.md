@@ -19,10 +19,21 @@ Test the controller logic in isolation, without involving any ASP.NET Core infra
 
 ### ✅ Example
 ```csharp
-var mock = Substitute.For<IUserService>();
-var controller = new UsersController(mock);
-var result = controller.Add(new AddUserDto());
-```
+[Fact]
+public void Add_Should_Call_Service_And_Return_Ok()
+{
+    // Arrange
+    var mockService = Substitute.For<IUserService>();
+    var controller = new UsersController(mockService);
+    var dto = new AddUserDto { Name = "Test", Email = "test@example.com" };
+
+    // Act
+    var result = controller.Add(dto);
+
+    // Assert
+    result.Should().BeOfType<OkResult>();
+    mockService.Received(1).AddUser(dto);
+}
 
 ---
 
