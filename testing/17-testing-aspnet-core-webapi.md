@@ -54,8 +54,17 @@ Test the integration of multiple layers: **Routing**, **Model Binding**, **Contr
 
 ### ✅ Example
 ```csharp
-var response = await client.PostAsJsonAsync("/api/users", dto);
-response.StatusCode.Should().Be(HttpStatusCode.OK);
+[Fact]
+public async Task Add_Should_Return_Ok_In_Integration()
+{
+    await using var factory = new CustomWebApplicationFactory<Program>();
+    var client = factory.CreateClient();
+
+    var dto = new AddUserDto { Name = "Integration Test", Email = "test@integration.com" };
+    var response = await client.PostAsJsonAsync("/api/users", dto);
+
+    response.StatusCode.Should().Be(HttpStatusCode.OK);
+}
 ```
 
 > ⚠️ **Database Note**: Integration tests typically use **In-Memory** databases like:
