@@ -34,7 +34,7 @@ public void Add_Should_Call_Service_And_Return_Ok()
     result.Should().BeOfType<OkResult>();
     mockService.Received(1).AddUser(dto);
 }
-
+```
 ---
 
 ## ✅ 2. Integration Testing
