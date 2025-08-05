@@ -1,4 +1,3 @@
-
 # API Key Authentication in ASP.NET Core 9
 
 ## Overview
@@ -250,12 +249,135 @@ Using API Key Authentication Handlers in ASP.NET Core 9 provides a clean, modula
 
 ---
 
-If you'd like, I can also help you build more advanced versions, like:
+## Advanced Example: Role-based API Key Authentication from Database
 
-- Loading API Keys from a database
-- Supporting multiple keys with different permissions
-- Combining API Key with JWT authentication
+In more complex systems, you may need to store multiple API Keys with different permissions (roles). Here’s how to extend the basic example to support role-based authorization.
+
+### 1. Define the Model and Repository
+
+```csharp
+public class ApiKeyRecord
+{
+    public string Key { get; set; }
+    public string ClientName { get; set; }
+    public string Role { get; set; }
+}
+
+public interface IApiKeyRepository
+{
+    ApiKeyRecord GetApiKey(string key);
+}
+
+public class InMemoryApiKeyRepository : IApiKeyRepository
+{
+    private readonly List<ApiKeyRecord> _apiKeys = new()
+    {
+        new ApiKeyRecord { Key = "key-service-a", ClientName = "ServiceA", Role = "Reader" },
+        new ApiKeyRecord { Key = "key-service-b", ClientName = "ServiceB", Role = "Admin" }
+    };
+
+    public ApiKeyRecord GetApiKey(string key)
+    {
+        return _apiKeys.FirstOrDefault(k => k.Key == key);
+    }
+}
+```
+
+### 2. Authentication Handler with Dynamic Claims
+
+```csharp
+public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyOptions>
+{
+    private readonly IApiKeyRepository _apiKeyRepo;
+
+    public ApiKeyAuthenticationHandler(
+        IOptionsMonitor<ApiKeyOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder,
+        ISystemClock clock,
+        IApiKeyRepository apiKeyRepo
+    ) : base(options, logger, encoder, clock)
+    {
+        _apiKeyRepo = apiKeyRepo;
+    }
+
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    {
+        if (!Request.Headers.TryGetValue(Options.ApiKeyHeaderName, out var apiKeyValue))
+        {
+            return Task.FromResult(AuthenticateResult.Fail("API Key is missing."));
+        }
+
+        var apiKeyRecord = _apiKeyRepo.GetApiKey(apiKeyValue);
+
+        if (apiKeyRecord == null)
+        {
+            return Task.FromResult(AuthenticateResult.Fail("Invalid API Key."));
+        }
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.Name, apiKeyRecord.ClientName),
+            new Claim(ClaimTypes.Role, apiKeyRecord.Role)
+        };
+
+        var identity = new ClaimsIdentity(claims, Options.Scheme);
+        var principal = new ClaimsPrincipal(identity);
+        var ticket = new AuthenticationTicket(principal, Options.Scheme);
+
+        return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+}
+```
+
+### 3. Program.cs Setup
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<IApiKeyRepository, InMemoryApiKeyRepository>();
+
+builder.Services
+    .AddAuthentication(ApiKeyOptions.DefaultScheme)
+    .AddScheme<ApiKeyOptions, ApiKeyAuthenticationHandler>(ApiKeyOptions.DefaultScheme, options => { });
+
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Secure endpoint (role-based)
+app.MapGet("/admin-data", [Authorize(Roles = "Admin", AuthenticationSchemes = ApiKeyOptions.DefaultScheme)] () =>
+{
+    return "Only Admin role can see this data.";
+});
+
+app.MapGet("/read-data", [Authorize(Roles = "Reader", AuthenticationSchemes = ApiKeyOptions.DefaultScheme)] () =>
+{
+    return "Only Reader role can see this data.";
+});
+
+app.Run();
+```
+
+### 4. Testing
+
+- Request with Admin role key:
+```
+GET /admin-data
+X-API-KEY: key-service-b
+
+✅ Works (Admin role matches endpoint requirement)
+```
+
+- Request with Reader role key:
+```
+GET /admin-data
+X-API-KEY: key-service-a
+
+❌ 403 Forbidden (API Key is valid but role does not match "Admin")
+```
 
 ---
-
-Feel free to ask if you want me to generate those too!
