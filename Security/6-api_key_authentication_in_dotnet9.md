@@ -424,6 +424,8 @@ var claims = new[]
 
 This lets you pass extra metadata about the client or permissions.
 
+---
+
 ## Question
 
 In the API Key authentication method where we add Claims, previously Claims didn’t exist, right? So, API Key was simpler compared to JWT, and now by adding Claims it became richer? 
