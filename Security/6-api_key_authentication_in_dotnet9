@@ -1,0 +1,261 @@
+
+# API Key Authentication in ASP.NET Core 9
+
+## Overview
+
+API Key authentication is one of the simplest yet effective ways to secure your APIs in **.NET 9**. Unlike more complex schemes like OAuth or JWT, API Keys provide a straightforward mechanism for validating client requests while maintaining good security practices.
+
+This document explains:
+
+- What API Key authentication is
+- How it compares with JWT
+- How ASP.NET Core 9 improves API Key authentication with Authentication Handlers
+- A complete example implementation of an API Key Authentication Handler
+- When and how the handler is executed in the request pipeline
+- A flow diagram of the authentication process
+
+---
+
+## What is API Key Authentication?
+
+API Key authentication is a method where clients send a unique identifier (the API key) with each request to prove they are authorized to access API endpoints. The server validates this key against a stored list of valid keys before processing the request.
+
+### How API Keys Are Sent
+
+API Keys are commonly sent in one of these ways:
+
+- HTTP Header (most common):  
+  ```
+  X-API-KEY: your-api-key
+  ```
+- Query String:  
+  ```
+  GET /api/data?api_key=your-api-key
+  ```
+- Request Body (less common for GET requests)
+
+### Server-side Validation
+
+The server checks the key from the request against a list/database of valid keys:
+
+- If the key is valid, the request proceeds.
+- If invalid or missing, the server returns `401 Unauthorized` or `403 Forbidden`.
+
+### Pros and Cons
+
+| Pros                        | Cons                                  |
+|-----------------------------|-------------------------------------|
+| Simple and easy to implement | Lower security compared to JWT/OAuth|
+| Stateless (no session needed)| API Key can be leaked and reused     |
+| Fast validation             | Does not identify actual user       |
+
+---
+
+## API Key vs JWT — What’s the Difference?
+
+| Feature               | API Key                              | JWT                                      |
+|-----------------------|------------------------------------|------------------------------------------|
+| Nature                | Static unique key                   | Signed token containing claims           |
+| Complexity            | Simple string comparison            | Token creation, signing, expiration       |
+| Contains user info?   | No                                 | Yes (user identity, roles, permissions)  |
+| Expiration            | Usually no expiration unless rotated| Has expiration time and refresh mechanisms|
+| Typical Use Cases     | Service-to-service or simple auth   | User authentication with claims & roles  |
+
+### Are They Replacements or Can They Work Together?
+
+- **Replacement:** In simple scenarios, API Key can replace JWT.
+- **Together:** In complex systems, API Key can identify the client app, and JWT can authenticate users inside that app. Both tokens can be sent together.
+
+---
+
+## Improved API Key Authentication in ASP.NET Core 9
+
+Instead of manually checking API Keys with Middleware or Filters, .NET 9 allows you to implement API Key authentication using **Authentication Handlers** that integrate fully with the ASP.NET Core Authentication system.
+
+### Benefits of Using Authentication Handlers
+
+- Uses the built-in ASP.NET Core authentication system
+- Supports `[Authorize]` attributes and policies
+- Clean and modular code
+- Easier integration with other authentication schemes (e.g., JWT)
+- Standardized 401/403 responses
+
+---
+
+## Sample Code: API Key Authentication Handler in .NET 9
+
+### 1. Define Options
+
+```csharp
+public class ApiKeyOptions : AuthenticationSchemeOptions
+{
+    public const string DefaultScheme = "ApiKeyScheme";
+    public string Scheme => DefaultScheme;
+    public string ApiKeyHeaderName { get; set; } = "X-API-KEY";
+    public string ValidApiKey { get; set; } = "my-secret-key";
+}
+```
+
+### 2. Create Authentication Handler
+
+```csharp
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
+
+public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyOptions>
+{
+    public ApiKeyAuthenticationHandler(
+        IOptionsMonitor<ApiKeyOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder,
+        ISystemClock clock
+    ) : base(options, logger, encoder, clock) { }
+
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    {
+        if (!Request.Headers.TryGetValue(Options.ApiKeyHeaderName, out var apiKey))
+        {
+            return Task.FromResult(AuthenticateResult.Fail("API Key is missing."));
+        }
+
+        if (apiKey != Options.ValidApiKey)
+        {
+            return Task.FromResult(AuthenticateResult.Fail("Invalid API Key."));
+        }
+
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.Name, "ApiKeyUser"),
+            new Claim(ClaimTypes.Role, "ApiUser")
+        };
+
+        var identity = new ClaimsIdentity(claims, Options.Scheme);
+        var principal = new ClaimsPrincipal(identity);
+        var ticket = new AuthenticationTicket(principal, Options.Scheme);
+
+        return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+}
+```
+
+### 3. Register Handler in Program.cs
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddAuthentication(ApiKeyOptions.DefaultScheme)
+    .AddScheme<ApiKeyOptions, ApiKeyAuthenticationHandler>(ApiKeyOptions.DefaultScheme, options =>
+    {
+        options.ValidApiKey = "super-secret-key"; // can be loaded from config or DB
+    });
+
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapGet("/secure-data", [Authorize(AuthenticationSchemes = ApiKeyOptions.DefaultScheme)] () =>
+{
+    return "You have accessed secure data!";
+});
+
+app.Run();
+```
+
+### 4. Client Request Example
+
+```
+GET /secure-data
+X-API-KEY: super-secret-key
+```
+
+---
+
+## When and How Is `ApiKeyAuthenticationHandler` Invoked?
+
+- ASP.NET Core executes authentication handlers inside the **Authentication Middleware** (`app.UseAuthentication()`).
+- When a request targets an endpoint decorated with `[Authorize(AuthenticationSchemes = "ApiKeyScheme")]`, the system selects the `ApiKeyAuthenticationHandler`.
+- The handler's `HandleAuthenticateAsync()` method runs.
+- If the API Key is valid, a `ClaimsPrincipal` is created and assigned to `HttpContext.User`.
+- Otherwise, a 401 Unauthorized response is returned.
+- Then authorization policies are checked (`app.UseAuthorization()`).
+
+---
+
+## Request Pipeline Flow Diagram
+
+```
+┌──────────────────────────┐
+│  HTTP Request Received   │
+└─────────────┬────────────┘
+              │
+              ▼
+     ┌───────────────────┐
+     │  Other Middleware  │
+     │ (Logging, CORS...) │
+     └─────────┬─────────┘
+               │
+               ▼
+     ┌───────────────────┐
+     │ UseAuthentication │
+     └─────────┬─────────┘
+               │
+               ▼
+  Does Endpoint Require Authentication?
+               │
+       ┌───────┴────────┐
+       │  Yes           │
+       │                │
+       ▼                │
+┌────────────────────────────────────┐
+│ Select Authentication Scheme (ApiKeyScheme) │
+└─────────────┬──────────────────────┘
+              │
+              ▼
+┌────────────────────────────────────────┐
+│ Run ApiKeyAuthenticationHandler        │
+│ → HandleAuthenticateAsync()            │
+└─────────────┬──────────────────────────┘
+              │
+     Is API Key valid?
+     ┌───────┴───────────┐
+     │ Yes               │ No
+     ▼                   ▼
+┌───────────────┐   ┌─────────────────┐
+│ ClaimsPrincipal│   │ Unauthorized(401)│
+│ created       │   └─────────────────┘
+└───────┬───────┘
+        │
+        ▼
+┌───────────────────┐
+│ UseAuthorization  │
+└─────────┬─────────┘
+          │
+          ▼
+┌──────────────────────┐
+│ Endpoint Executed     │
+└──────────────────────┘
+```
+
+---
+
+## Summary
+
+Using API Key Authentication Handlers in ASP.NET Core 9 provides a clean, modular, and standard way to secure your APIs. It integrates seamlessly with the ASP.NET Core authentication and authorization pipeline, making your security code maintainable and extensible.
+
+---
+
+If you'd like, I can also help you build more advanced versions, like:
+
+- Loading API Keys from a database
+- Supporting multiple keys with different permissions
+- Combining API Key with JWT authentication
+
+---
+
+Feel free to ask if you want me to generate those too!
