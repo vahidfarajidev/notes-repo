@@ -424,5 +424,59 @@ var claims = new[]
 
 This lets you pass extra metadata about the client or permissions.
 
+## Question
+
+In the API Key authentication method where we add Claims, previously Claims didn’t exist, right? So, API Key was simpler compared to JWT, and now by adding Claims it became richer? 
+
+Previously, when only API Key was used, it was usually just a simple string checked for validity, with no user details or extra information. So basically, API Key was a "simple key" that just said "Is this request authorized or not?" but usually didn’t contain user identity or roles.
+
+But when we combine this with ASP.NET Core Authentication Handlers and add Claims inside the `ClaimsPrincipal`, we are effectively adding a richer authentication step, similar to JWT which is full of various Claims.
+
+Meaning:
+
+- Previously API Key was just simple validation
+- Now, by adding Claims in the `ApiKeyAuthenticationHandler`, we can include role, client name, and other info
+- This makes API Key behave more like JWT, while still keeping its simplicity and speed
+
+So we can say ASP.NET Core 9 has enhanced API Key from a simple key to a more "informative" authentication mechanism, without full JWT complexity.
+
+### Summary:
+
+API Key was simple before, now with Claims it gets closer to JWT but still lighter and faster.
+
+---
+
+## Follow-up Question
+
+Now that it’s like this, what’s the need for JWT anymore?
+
+Even though API Key with added Claims can meet many simple authentication needs, JWT still has strong reasons to be used:
+
+### Why JWT is still needed?
+
+- **Real user identification and richer info:**  
+  JWT usually contains detailed user identity info (username, email, user ID) and complex permission levels. API Key is mostly for identifying services or clients.
+
+- **Higher security:**  
+  JWT is signed and sometimes encrypted, which prevents tampering or forgery. API Key is usually a fixed string that if leaked, can be misused.
+
+- **Token management (Expiration & Refresh):**  
+  JWT usually has expiration and supports refresh tokens. API Keys often don’t expire unless manually rotated.
+
+- **Distributed, stateless authentication:**  
+  JWT can be validated without a central database on multiple servers/services. API Key usually requires checking against a central store.
+
+- **More flexibility:**  
+  JWT can carry complex info easily and can be adapted to various policies and systems.
+
+### In conclusion:
+
+- **API Key:** simple, fast, suitable for service-to-service or client identification with simple auth  
+- **JWT:** complex, secure, suitable for user authentication with detailed roles and claims
+
+They can also be used together; for example, API Key to identify the service and JWT to identify the user within that service.
+
+---
+
 ---
 
