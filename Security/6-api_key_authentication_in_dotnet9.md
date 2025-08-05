@@ -475,5 +475,3 @@ Even though API Key with added Claims can meet many simple authentication needs,
 - **JWT:** complex, secure, suitable for user authentication with detailed roles and claims
 
 They can also be used together; for example, API Key to identify the service and JWT to identify the user within that service.
-
----
