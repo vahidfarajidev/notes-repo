@@ -186,6 +186,50 @@ X-API-KEY: super-secret-key
 
 ---
 
+## Securing Endpoints with Roles
+
+In `Program.cs`, you can restrict access based on roles assigned in claims:
+
+```csharp
+// Secure endpoint (role-based)
+app.MapGet("/admin-data", [Authorize(Roles = "Admin", AuthenticationSchemes = ApiKeyOptions.DefaultScheme)] () =>
+{
+    return "Only Admin role can see this data.";
+});
+
+app.MapGet("/read-data", [Authorize(Roles = "Reader", AuthenticationSchemes = ApiKeyOptions.DefaultScheme)] () =>
+{
+    return "Only Reader role can see this data.";
+});
+```
+
+---
+
+## Understanding Role-based Access and API Keys
+
+- `key-service-b` might be associated with the "Admin" role and can access `/admin-data`.
+- `key-service-a` might be associated with the "Reader" role and cannot access `/admin-data`, resulting in `403 Forbidden`.
+- Both keys can have different roles that affect what endpoints they can access.
+
+---
+
+## Additional Notes on Claims
+
+You can add any claims you want in the handler, not just `Name` and `Role`. For example:
+
+```csharp
+var claims = new[]
+{
+    new Claim(ClaimTypes.Name, apiKeyRecord.ClientName),
+    new Claim(ClaimTypes.Role, apiKeyRecord.Role),
+    new Claim("CustomClaimType", "CustomValue")
+};
+```
+
+This lets you pass extra metadata about the client or permissions.
+
+---
+
 ## Request Pipeline Flow Diagram
 
 ```
