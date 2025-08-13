@@ -27,6 +27,7 @@ PrintNumbers(1, 2, 3, 4);  // No need to create an array
   PrintNumbers(new int[] {1, 2, 3, 4});
   ```
 - With `params`, you can pass individual numbers directly, and the method receives them as an array.
+- **Advantage:** `params` makes method calls cleaner and more readable, especially when passing multiple values, without explicitly creating an array.
 
 ## Example: `params` with `IEnumerable<T>` (C# 13)
 
