@@ -41,6 +41,21 @@ PrintNumbers(new int[] {5, 10, 15});
 PrintNumbers(new int[] {1, 2, 3, 4, 5});
 ```
 
+The `PrintNumbers` method itself does not change; it still receives an array of numbers and prints them. The real change is only in **how the method is called**:
+
+- Without `params`, every time you wanted to pass numbers to the method, you had to create an array:
+```csharp
+PrintNumbers(new int[] {1, 2, 3, 4});
+```
+
+- With `params`, there is no need to create an array, and you can pass numbers directly:
+```csharp
+PrintNumbers(1, 2, 3, 4);
+```
+
+💡 Result: The method is the same as before, but calling it is **cleaner and shorter**, without creating temporary arrays. This simplification is especially beneficial when the number of arguments is large or variable.
+
+
 ## Example: `params` with `IEnumerable<T>` (C# 13)
 
 ```csharp
