@@ -376,6 +376,12 @@ class Program
    - In professional code, each function can **log errors independently** without exposing technical details to the user.  
    - In this non-professional sample, detailed logging would require **extensive catch blocks in `Main`** and manually adding function context.
 
+     The meaning of this sentence is that when all exception handling is done in Main (like in the non-professional sample), if we want detailed and complete logging, we need to write a separate catch block for each type of exception in Main and manually include the function context where the error occurred, in addition to the error message.
+
+For example, if the DivideByNumber function throws an ArgumentOutOfRangeException, to have complete logging, the corresponding catch block in Main must specify that this error came from DivideByNumber, what the parameter values were, etc. In contrast, in the professional approach, the function itself knows this information and can log it directly without requiring Main to handle all the details.
+
+Simply put: in the non-professional sample, Main has to manually manage everything to ensure complete logging, whereas in the professional approach, each function is responsible for accurately logging its own errors.
+
 **In short:** Professional code makes each function “smart” to handle predictable errors itself, while `Main` only deals with **unexpected or unhandled exceptions**.
 
 
