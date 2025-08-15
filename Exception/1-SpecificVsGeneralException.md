@@ -78,50 +78,6 @@ catch (Exception ex)
 
 > Using specific exceptions helps improve code clarity, maintainability, and user feedback. General exceptions are a fallback for unpredicted errors.
 ---
-# Best Practices for Exception Handling in Professional Projects
-
-In professional projects, the following practices are commonly followed for exception handling:
-
-## 1️⃣ Specific Exceptions Take Priority
-
-For each operation that may throw an error, developers try to catch **specific exceptions**.
-
-**Examples:** `DivideByZeroException`, `FileNotFoundException`, `SqlException`, etc.
-
-**Advantages:**
-- You can precisely identify what went wrong.
-- Enables appropriate corrective actions.
-
-## 2️⃣ General Exception Only as a Last Resort or for Logging
-
-Usually, a `catch (Exception ex)` is placed at the highest level of the application to ensure no exception is missed.
-
-- This general catch is typically used **only for logging and notification**, not for handling specific errors.
-
-## 3️⃣ Detailed Logging
-
-All exceptions are logged (e.g., using Serilog, NLog, or ELK stack).
-
-- Logs usually include:
-  - Error message
-  - Stack trace
-  - Timestamp
-  - Context information
-
-## 4️⃣ User-Friendly Messages
-
-End users never see technical error details.
-
-- Only clear and understandable messages are displayed, e.g.:
-  - “Cannot divide by zero”
-  - “File not found”
-
-## 5️⃣ Monitoring and Alerts
-
-Monitoring systems (e.g., Application Insights, Sentry, Datadog) collect errors and send alerts to the team.
-
-- Helps in quickly identifying and addressing issues in production.
----
 
 ## This example demonstrates a simpler, non-professional exception handling approach:
 
@@ -197,6 +153,51 @@ class Program
     }
 }
 ```
+
+# Best Practices for Exception Handling in Professional Projects
+
+In professional projects, the following practices are commonly followed for exception handling:
+
+## 1️⃣ Specific Exceptions Take Priority
+
+For each operation that may throw an error, developers try to catch **specific exceptions**.
+
+**Examples:** `DivideByZeroException`, `FileNotFoundException`, `SqlException`, etc.
+
+**Advantages:**
+- You can precisely identify what went wrong.
+- Enables appropriate corrective actions.
+
+## 2️⃣ General Exception Only as a Last Resort or for Logging
+
+Usually, a `catch (Exception ex)` is placed at the highest level of the application to ensure no exception is missed.
+
+- This general catch is typically used **only for logging and notification**, not for handling specific errors.
+
+## 3️⃣ Detailed Logging
+
+All exceptions are logged (e.g., using Serilog, NLog, or ELK stack).
+
+- Logs usually include:
+  - Error message
+  - Stack trace
+  - Timestamp
+  - Context information
+
+## 4️⃣ User-Friendly Messages
+
+End users never see technical error details.
+
+- Only clear and understandable messages are displayed, e.g.:
+  - “Cannot divide by zero”
+  - “File not found”
+
+## 5️⃣ Monitoring and Alerts
+
+Monitoring systems (e.g., Application Insights, Sentry, Datadog) collect errors and send alerts to the team.
+
+- Helps in quickly identifying and addressing issues in production.
+---
 
 # Advanced Exception Handling in C#
 
