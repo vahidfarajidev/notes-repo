@@ -199,9 +199,6 @@ End users never see technical error details.
 Monitoring systems (e.g., Application Insights, Sentry, Datadog) collect errors and send alerts to the team.
 
 - Helps in quickly identifying and addressing issues in production.
----
-
-# Advanced Exception Handling in C#
 
 This example demonstrates professional-level exception handling in C#, using multiple specific exceptions along with a final general exception for robust and maintainable code.
 
