@@ -349,3 +349,29 @@ class Program
 }
 ```
 > This structure demonstrates how to handle multiple specific exceptions for predictable errors while using a final general exception to catch anything unexpected. It also emphasizes clean separation of operations and professional logging practices.
+
+# Key Differences Between This Non-Professional Sample and “Professional In-Function Exception Handling”
+
+1. **Level of Exception Management**
+
+   - In this non-professional sample, `DivideByNumber` only **throws exceptions** (e.g., `throw new ArgumentOutOfRangeException`) and does **not have any internal `catch` blocks**.  
+   - In a professional approach, the function itself **catches predictable exceptions**, logs them, provides meaningful messages to the user, and optionally rethrows if needed.
+
+2. **Reliance on `Main` for Handling**
+
+   - Here, **all exception handling is delegated to `Main`**. Every error must be caught there to show proper feedback to the user.  
+   - Professionally, each function is responsible for handling its **own predictable errors**, and only unexpected exceptions bubble up to `Main`.
+
+3. **Readability and Maintainability**
+
+   - When functions manage their specific exceptions, `Main` remains **clean and simple**.  
+   - If all catches are in `Main`, the method becomes **long and cluttered** with error-handling logic.
+
+4. **Logging and Debugging**
+
+   - In professional code, each function can **log errors independently** without exposing technical details to the user.  
+   - In this non-professional sample, detailed logging would require **extensive catch blocks in `Main`** and manually adding function context.
+
+**In short:** Professional code makes each function “smart” to handle predictable errors itself, while `Main` only deals with **unexpected or unhandled exceptions**.
+
+
