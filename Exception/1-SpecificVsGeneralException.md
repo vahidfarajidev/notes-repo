@@ -223,8 +223,6 @@ Monitoring systems (e.g., Application Insights, Sentry, Datadog) collect errors 
   - Division, array processing, file reading, and database access are in separate methods
   - Keeps code clean, readable, and maintainable
 
-## Example Code
-
 ```csharp
 using System;
 using System.IO;
