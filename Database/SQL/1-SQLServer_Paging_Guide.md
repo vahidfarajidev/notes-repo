@@ -37,7 +37,7 @@ WITH OrderedEmployees AS (
 )
 SELECT *
 FROM OrderedEmployees
-WHERE RowNum BETWEEN 11 AND 15;  -- Fetch rows for the second page if page size is 5
+WHERE RowNum BETWEEN 11 AND 15;  -- Fetch rows for the third page if page size is 5
 ```
 
 ### Using Subquery
@@ -49,7 +49,7 @@ FROM (
            ROW_NUMBER() OVER (ORDER BY EmployeeID) AS RowNum
     FROM Employees
 ) AS OrderedEmployees
-WHERE RowNum BETWEEN 11 AND 15;  -- Fetch rows for the second page if page size is 5
+WHERE RowNum BETWEEN 11 AND 15;  -- Fetch rows for the third page if page size is 5
 ```
 
 - `ROW_NUMBER()` assigns a sequential number to rows based on the desired order.  
