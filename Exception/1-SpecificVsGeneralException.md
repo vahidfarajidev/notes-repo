@@ -77,3 +77,74 @@ catch (Exception ex)
 ```
 
 > Using specific exceptions helps improve code clarity, maintainability, and user feedback. General exceptions are a fallback for unpredicted errors.
+
+---
+
+## This example demonstrates handling multiple specific exceptions in different functions and using a general exception as a safety net:
+
+```csharp
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int[] numbers = { 10, 20, 0, 5 };
+        
+        foreach (var num in numbers)
+        {
+            try
+            {
+                int result = DivideByNumber(100, num);
+                Console.WriteLine($"100 / {num} = {result}");
+            }
+            catch (DivideByZeroException ex)
+            {
+                Console.WriteLine($"Cannot divide by zero! Value: {num}");
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.WriteLine($"Invalid index or value: {num}");
+            }
+            catch (Exception ex) // General exception as a safety net
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+        }
+
+        try
+        {
+            int value = GetArrayValue(numbers, 10); // Intentionally out of range
+            Console.WriteLine($"Value at index 10: {value}");
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Console.WriteLine("Caught out of range exception when accessing array!");
+        }
+    }
+
+    static int DivideByNumber(int dividend, int divisor)
+    {
+        if (divisor < 0)
+            throw new ArgumentOutOfRangeException(nameof(divisor), "Divisor cannot be negative");
+
+        return dividend / divisor;
+    }
+
+    static int GetArrayValue(int[] array, int index)
+    {
+        if (index < 0 || index >= array.Length)
+            throw new ArgumentOutOfRangeException(nameof(index), "Index out of bounds");
+
+        return array[index];
+    }
+}
+```
+
+**Summary:**
+- `DivideByNumber` may throw `DivideByZeroException` or `ArgumentOutOfRangeException`.
+- `GetArrayValue` may throw `ArgumentOutOfRangeException`.
+- `Main` catches multiple specific exceptions and uses a general `Exception` as a fallback.
+
+> Using multiple specific exceptions along with a general exception ensures robust, maintainable code that can give meaningful feedback to the user while still catching unexpected errors.
+
