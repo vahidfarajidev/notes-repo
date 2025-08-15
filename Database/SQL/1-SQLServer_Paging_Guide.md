@@ -23,9 +23,11 @@ FETCH NEXT 5 ROWS ONLY;  -- Number of rows to fetch
 
 ---
 
-## 2️⃣ Using `ROW_NUMBER()` with a CTE (for SQL Server versions before 2012)
+## 2️⃣ Using `ROW_NUMBER()` for paging (before SQL Server 2012)
 
-Before SQL Server 2012, `TOP` and `ROW_NUMBER()` in a CTE or subquery were commonly used.
+Before SQL Server 2012, `TOP` and `ROW_NUMBER()` in a CTE or subquery were commonly used. Below are two equivalent ways.
+
+### Using CTE
 
 ```sql
 WITH OrderedEmployees AS (
@@ -38,8 +40,21 @@ FROM OrderedEmployees
 WHERE RowNum BETWEEN 11 AND 15;  -- Fetch rows for the second page if page size is 5
 ```
 
+### Using Subquery
+
+```sql
+SELECT *
+FROM (
+    SELECT *,
+           ROW_NUMBER() OVER (ORDER BY EmployeeID) AS RowNum
+    FROM Employees
+) AS OrderedEmployees
+WHERE RowNum BETWEEN 11 AND 15;  -- Fetch rows for the second page if page size is 5
+```
+
 - `ROW_NUMBER()` assigns a sequential number to rows based on the desired order.  
-- The `WHERE` clause filters the rows for the desired page.
+- The `WHERE` clause filters the rows for the desired page.  
+- Subquery method is equivalent to CTE, just without using `WITH`.
 
 ---
 
