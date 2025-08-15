@@ -122,7 +122,22 @@ Monitoring systems (e.g., Application Insights, Sentry, Datadog) collect errors 
 
 - Helps in quickly identifying and addressing issues in production.
 ---
-## This example demonstrates handling multiple specific exceptions in different functions and using a general exception as a safety net:
+
+## This example demonstrates a simpler, non-professional exception handling approach:
+
+- Each function (DivideByNumber, GetArrayValue) does not handle its own exceptions internally.
+
+- Instead, all exceptions are propagated to the Main method, where multiple specific exceptions (DivideByZeroException, ArgumentOutOfRangeException) are caught.
+
+- A general Exception catch acts as a safety net for any unexpected errors.
+
+- The advantage of this approach is simplicity and fewer lines of code inside functions.
+
+- The disadvantage is that Main becomes responsible for all error handling, which can make it long, harder to maintain, and less modular.
+
+- Functions do not log errors or provide context-specific messages; all handling logic is centralized in Main.
+
+- In contrast, a professional approach would let each function handle predictable exceptions internally, log them appropriately, and leave only unexpected errors to be handled by Main.
 
 ```csharp
 using System;
@@ -182,14 +197,6 @@ class Program
     }
 }
 ```
-
-**Summary:**
-- `DivideByNumber` may throw `DivideByZeroException` or `ArgumentOutOfRangeException`.
-- `GetArrayValue` may throw `ArgumentOutOfRangeException`.
-- `Main` catches multiple specific exceptions and uses a general `Exception` as a fallback.
-
-> Using multiple specific exceptions along with a general exception ensures robust, maintainable code that can give meaningful feedback to the user while still catching unexpected errors.
-
 
 # Advanced Exception Handling in C#
 
