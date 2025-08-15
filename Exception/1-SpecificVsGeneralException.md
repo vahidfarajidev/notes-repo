@@ -238,7 +238,7 @@ class Program
             // Example 1: Division
             DivideNumbers(10, 0);
 
-            // Example 2: Deliberate DivideByZero and IndexOutOfRange
+            // Example 2: Deliberate DivideByZero, IndexOutOfRange and NullReferenceException
             ProcessArray(numbers, 0, 5); 
 
             // Example 3: Reading a file
