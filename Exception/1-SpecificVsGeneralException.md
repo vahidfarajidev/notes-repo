@@ -81,20 +81,6 @@ catch (Exception ex)
 
 ## This example demonstrates a simpler, non-professional exception handling approach:
 
-- Each function (DivideByNumber, GetArrayValue) does not handle its own exceptions internally.
-
-- Instead, all exceptions are propagated to the Main method, where multiple specific exceptions (DivideByZeroException, ArgumentOutOfRangeException) are caught.
-
-- A general Exception catch acts as a safety net for any unexpected errors.
-
-- The advantage of this approach is simplicity and fewer lines of code inside functions.
-
-- The disadvantage is that Main becomes responsible for all error handling, which can make it long, harder to maintain, and less modular.
-
-- Functions do not log errors or provide context-specific messages; all handling logic is centralized in Main.
-
-- In contrast, a professional approach would let each function handle predictable exceptions internally, log them appropriately, and leave only unexpected errors to be handled by Main.
-
 ```csharp
 using System;
 
@@ -153,6 +139,22 @@ class Program
     }
 }
 ```
+
+- Each function (DivideByNumber, GetArrayValue) does not handle its own exceptions internally.
+
+- Instead, all exceptions are propagated to the Main method, where multiple specific exceptions (DivideByZeroException, ArgumentOutOfRangeException) are caught.
+
+- A general Exception catch acts as a safety net for any unexpected errors.
+
+- The advantage of this approach is simplicity and fewer lines of code inside functions.
+
+- The disadvantage is that Main becomes responsible for all error handling, which can make it long, harder to maintain, and less modular.
+
+- Functions do not log errors or provide context-specific messages; all handling logic is centralized in Main.
+
+- In contrast, a professional approach would let each function handle predictable exceptions internally, log them appropriately, and leave only unexpected errors to be handled by Main.
+
+---
 
 # Best Practices for Exception Handling in Professional Projects
 
