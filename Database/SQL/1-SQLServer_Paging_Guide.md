@@ -58,4 +58,13 @@ WHERE RowNum BETWEEN 11 AND 15;  -- Fetch rows for the second page if page size 
 
 ---
 
+💡 **Note on professional usage in 2025:**
+
+In modern projects, `OFFSET ... FETCH NEXT` is generally preferred because it is:
+- Officially supported and standard in SQL Server 2012+
+- Cleaner and easier to read
+- Well-optimized for typical paging scenarios
+
+The `ROW_NUMBER()` method is still used for complex ranking or multi-level filtering, but for simple pagination, `OFFSET ... FETCH NEXT` is the common choice.
+
 💡 **Note:** SQL Server does **not** support `LIMIT`. The modern and standard approach is `OFFSET ... FETCH NEXT`.
