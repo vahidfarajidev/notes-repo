@@ -262,14 +262,21 @@ class Program
     {
         try
         {
+            if (b < 0)
+                throw new ArgumentOutOfRangeException(nameof(b), "Divisor cannot be negative");
+    
             int result = a / b;
             Console.WriteLine($"Result: {result}");
         }
         catch (DivideByZeroException ex)
         {
-            // Specific Exception
             LogError(ex);
             Console.WriteLine("Cannot divide by zero!");
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            LogError(ex);
+            Console.WriteLine("Divisor cannot be negative!");
         }
     }
 
