@@ -190,3 +190,154 @@ class Program
 
 > Using multiple specific exceptions along with a general exception ensures robust, maintainable code that can give meaningful feedback to the user while still catching unexpected errors.
 
+
+# Advanced Exception Handling in C#
+
+This example demonstrates professional-level exception handling in C#, using multiple specific exceptions along with a final general exception for robust and maintainable code.
+
+## Key Features of this Example
+
+- **Specific Exceptions** for each type of operation:
+  - `DivideByZeroException` for division operations
+  - `FileNotFoundException` and `IOException` for file operations
+  - `SqlException` for database queries
+
+- **General Exception** in `Main` for final catch:
+  - Ensures any unexpected errors are logged and handled gracefully
+
+- **LogError Method**:
+  - Centralized logging without exposing technical details to the user
+  - Can be replaced by professional logging frameworks like Serilog or NLog
+
+- **User-Friendly Messages**:
+  - Users receive clear and meaningful messages without seeing stack traces or internal details
+
+- **Separation of Operations**:
+  - Division, array processing, file reading, and database access are in separate methods
+  - Keeps code clean, readable, and maintainable
+
+## Example Code
+
+```csharp
+using System;
+using System.IO;
+using System.Data.SqlClient;
+
+class Program
+{
+    static void Main()
+    {
+        int[] numbers = { 10, 20, 30 };
+        try
+        {
+            // Example 1: Division
+            DivideNumbers(10, 0);
+
+            // Example 2: Deliberate DivideByZero and IndexOutOfRange
+            ProcessArray(numbers, 0, 5); 
+
+            // Example 3: Reading a file
+            ReadFile("nonexistentfile.txt");
+
+            // Example 4: Database query
+            ExecuteDatabaseQuery("SELECT * FROM NonexistentTable");
+        }
+        catch (Exception ex)
+        {
+            // General Exception for final catch
+            LogError(ex);
+            Console.WriteLine("An unexpected error occurred. Please contact support.");
+        }
+    }
+
+    static void DivideNumbers(int a, int b)
+    {
+        try
+        {
+            int result = a / b;
+            Console.WriteLine($"Result: {result}");
+        }
+        catch (DivideByZeroException ex)
+        {
+            // Specific Exception
+            LogError(ex);
+            Console.WriteLine("Cannot divide by zero!");
+        }
+    }
+
+    static void ProcessArray(int[] arr, int divisor, int accessIndex)
+    {
+        try
+        {
+            int divisionResult = arr[0] / divisor;
+            Console.WriteLine($"Division result: {divisionResult}");
+
+            int value = arr[accessIndex];
+            Console.WriteLine($"Accessed value: {value}");
+        }
+        catch (DivideByZeroException ex)
+        {
+            LogError(ex);
+            Console.WriteLine("Error: Cannot divide by zero!");
+        }
+        catch (IndexOutOfRangeException ex)
+        {
+            LogError(ex);
+            Console.WriteLine("Error: Array index is out of range!");
+        }
+        catch (NullReferenceException ex)
+        {
+            LogError(ex);
+            Console.WriteLine("Error: Array is null!");
+        }
+    }
+
+    static void ReadFile(string path)
+    {
+        try
+        {
+            string content = File.ReadAllText(path);
+            Console.WriteLine(content);
+        }
+        catch (FileNotFoundException ex)
+        {
+            LogError(ex);
+            Console.WriteLine($"File not found: {path}");
+        }
+        catch (IOException ex)
+        {
+            LogError(ex);
+            Console.WriteLine("An I/O error occurred while reading the file.");
+        }
+    }
+
+    static void ExecuteDatabaseQuery(string query)
+    {
+        try
+        {
+            using (SqlConnection conn = new SqlConnection("YourConnectionString"))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(query, conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Console.WriteLine(reader[0]);
+                }
+            }
+        }
+        catch (SqlException ex)
+        {
+            LogError(ex);
+            Console.WriteLine("Database query failed. Please check your query or connection.");
+        }
+    }
+
+    static void LogError(Exception ex)
+    {
+        // In real projects, you can use Serilog or NLog here
+        Console.WriteLine($"[LOG] {DateTime.Now}: {ex.GetType().Name} - {ex.Message}");
+    }
+}
+```
+> This structure demonstrates how to handle multiple specific exceptions for predictable errors while using a final general exception to catch anything unexpected. It also emphasizes clean separation of operations and professional logging practices.
