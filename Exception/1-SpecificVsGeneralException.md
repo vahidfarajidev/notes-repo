@@ -363,7 +363,7 @@ class Program
 
 2. **Reliance on `Main` for Handling**
 
-   - Here, **all exception handling is delegated to `Main`**. Every error must be caught there to show proper feedback to the user.  
+   - In this non-professional sample, **all exception handling is delegated to `Main`**. Every error must be caught there to show proper feedback to the user.  
    - Professionally, each function is responsible for handling its **own predictable errors**, and only unexpected exceptions bubble up to `Main`.
 
 3. **Readability and Maintainability**
