@@ -18,7 +18,7 @@ OFFSET 10 ROWS      -- Number of rows to skip
 FETCH NEXT 5 ROWS ONLY;  -- Number of rows to fetch
 ```
 
-- `OFFSET` specifies how many rows to skip (e.g., for the second page if each page has 10 rows, use `OFFSET 10 ROWS`).  
+- `OFFSET` OFFSET specifies how many rows to skip (e.g., for the third page if each page has 5 rows, use `OFFSET 10 ROWS`).
 - `FETCH NEXT ... ROWS ONLY` specifies how many rows to retrieve for the current page.
 
 ---
