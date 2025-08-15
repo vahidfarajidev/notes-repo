@@ -200,7 +200,7 @@ Monitoring systems (e.g., Application Insights, Sentry, Datadog) collect errors 
 
 - Helps in quickly identifying and addressing issues in production.
 
-This example demonstrates professional-level exception handling in C#, using multiple specific exceptions along with a final general exception for robust and maintainable code.
+## This example demonstrates professional-level exception handling in C#, using multiple specific exceptions along with a final general exception for robust and maintainable code.
 
 ## Key Features of this Example
 
