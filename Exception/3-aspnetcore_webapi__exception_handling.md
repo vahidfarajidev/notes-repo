@@ -343,3 +343,19 @@ app.Run();
 - **Middleware**: Centralizes logging and maps exceptions to proper HTTP responses.  
 
 This approach ensures maintainability, consistent error handling, and clear semantics for API consumers.
+
+## 💡 Exception “Bubble Up”
+
+When we say an exception **“bubbles up”**, it means the exception is **not caught in the current layer** and is propagated to the higher layers.  
+
+In our example:  
+
+- If the **Repository** encounters a system exception such as `SqlException` or `DbUpdateException`, it **does not catch it**.  
+- The exception **bubbles up** to the **Service Layer**.  
+- If the Service Layer also does not catch it (which is usually the case for system exceptions), the exception continues to propagate until it reaches the **Middleware**.  
+- The **Middleware** catches the exception, logs it, and returns an appropriate HTTP response.  
+
+So, **“bubble up”** means the exception passes through the current layer until it finds a handler (like the Middleware).  
+
+In simple terms: the exception moves up from the lowest layer until someone is responsible for handling it, without the Repository interfering with it.
+
