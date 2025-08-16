@@ -9,7 +9,11 @@
 - **DomainException:** Thrown when a domain rule is violated, e.g.:
   - `InsufficientFundsException` → when the account balance is insufficient.
   - `InvalidAmountException` → when a deposit or withdrawal amount is invalid.
-- **SystemException:** Rarely occurs in the Domain layer, only for unexpected runtime errors. The focus of the Domain is on business rules, not database or I/O issues.
+- **Parameter validation exceptions:** Thrown for invalid input parameters, e.g.:
+  - `ArgumentException`
+  - `ArgumentNullException`
+
+**Note:** System-level exceptions (e.g., database or I/O errors) generally do not occur in the Domain layer. The Domain focuses on enforcing business rules and validating inputs.
 
 ---
 
