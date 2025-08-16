@@ -16,12 +16,21 @@ However, in more advanced architectures (e.g., **CQRS** or distributed systems),
 ```csharp
 namespace BankingApi.Domain
 {
-    // Base exception for domain rules
+    // -------------------------------
+    // Base Domain Exception
+    // -------------------------------
+    /// <summary>
+    /// Base class for all domain-related exceptions.
+    /// Domain exceptions represent violations of business rules.
+    /// </summary>
     public abstract class DomainException : Exception
     {
         protected DomainException(string message) : base(message) { }
     }
 
+    // -------------------------------
+    // Specific Domain Exceptions
+    // -------------------------------
     public class InsufficientFundsException : DomainException
     {
         public InsufficientFundsException(string accountId, decimal balance, decimal attempted)
@@ -34,15 +43,27 @@ namespace BankingApi.Domain
             : base($"Invalid amount: {amount}. Must be greater than zero.") { }
     }
 
+    // -------------------------------
+    // Account Aggregate
+    // -------------------------------
+    /// <summary>
+    /// Represents a bank account and enforces domain rules for withdrawals and deposits.
+    /// Domain enforces all input validation and business logic.
+    /// </summary>
     public class Account
     {
         public string Id { get; private set; }
         public decimal Balance { get; private set; }
 
-        public Account(string id, decimal balance)
+        public Account(string id, decimal initialBalance = 0)
         {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("Account ID cannot be empty.", nameof(id));
+            if (initialBalance < 0)
+                throw new ArgumentException("Initial balance cannot be negative.", nameof(initialBalance));
+
             Id = id;
-            Balance = balance;
+            Balance = initialBalance;
         }
 
         public void Withdraw(decimal amount)
@@ -65,6 +86,13 @@ namespace BankingApi.Domain
         }
     }
 
+    // -------------------------------
+    // Transaction Entity
+    // -------------------------------
+    /// <summary>
+    /// Represents a money transfer transaction between two accounts.
+    /// All domain validation should occur before creating a transaction instance.
+    /// </summary>
     public class Transaction
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -72,6 +100,20 @@ namespace BankingApi.Domain
         public string ToAccountId { get; set; }
         public decimal Amount { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public Transaction(string fromAccountId, string toAccountId, decimal amount)
+        {
+            if (string.IsNullOrWhiteSpace(fromAccountId))
+                throw new ArgumentException("FromAccountId cannot be empty.", nameof(fromAccountId));
+            if (string.IsNullOrWhiteSpace(toAccountId))
+                throw new ArgumentException("ToAccountId cannot be empty.", nameof(toAccountId));
+            if (amount <= 0)
+                throw new ArgumentException("Transaction amount must be positive.", nameof(amount));
+
+            FromAccountId = fromAccountId;
+            ToAccountId = toAccountId;
+            Amount = amount;
+        }
     }
 }
 ```
