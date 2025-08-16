@@ -16,24 +16,39 @@ However, in more advanced architectures (e.g., **CQRS** or distributed systems),
 ```csharp
 namespace BankingApi.Domain
 {
-    // Custom domain exception for insufficient funds
-    public class InsufficientFundsException : Exception
+    // Base exception for domain rules
+    public abstract class DomainException : Exception
     {
-        public InsufficientFundsException(string accountId, decimal balance, decimal amount)
-            : base($"Account {accountId} has insufficient funds. Balance: {balance}, Attempted withdraw: {amount}")
-        {
-        }
+        protected DomainException(string message) : base(message) { }
+    }
+
+    public class InsufficientFundsException : DomainException
+    {
+        public InsufficientFundsException(string accountId, decimal balance, decimal attempted)
+            : base($"Account {accountId} has insufficient funds. Balance={balance}, Attempted={attempted}") { }
+    }
+
+    public class InvalidAmountException : DomainException
+    {
+        public InvalidAmountException(decimal amount)
+            : base($"Invalid amount: {amount}. Must be greater than zero.") { }
     }
 
     public class Account
     {
-        public string Id { get; set; }
+        public string Id { get; private set; }
         public decimal Balance { get; private set; }
+
+        public Account(string id, decimal balance)
+        {
+            Id = id;
+            Balance = balance;
+        }
 
         public void Withdraw(decimal amount)
         {
             if (amount <= 0)
-                throw new ArgumentException("Amount must be positive.");
+                throw new InvalidAmountException(amount);
 
             if (Balance < amount)
                 throw new InsufficientFundsException(Id, Balance, amount);
@@ -44,10 +59,19 @@ namespace BankingApi.Domain
         public void Deposit(decimal amount)
         {
             if (amount <= 0)
-                throw new ArgumentException("Amount must be positive.");
+                throw new InvalidAmountException(amount);
 
             Balance += amount;
         }
+    }
+
+    public class Transaction
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string FromAccountId { get; set; }
+        public string ToAccountId { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
 ```
