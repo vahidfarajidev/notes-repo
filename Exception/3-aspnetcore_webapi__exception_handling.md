@@ -216,8 +216,10 @@ namespace BankingApi.Services
        /// </para>
        /// <para>
        /// Key points:
-       /// 1. **Atomicity with database transaction**: Withdraw, Deposit, and SaveTransaction 
-       ///    occur in a single transaction. If anything fails, all changes are rolled back.
+       /// 1. **Atomicity with explicit database transaction**: Withdraw, Deposit, and SaveTransaction 
+       ///    occur in a single transaction. EF Core's implicit transactions per SaveChanges are not sufficient 
+       ///    because we have multiple operations that must all succeed or fail together. 
+       ///    Using BeginTransactionAsync ensures either all changes are committed, or all are rolled back.
        /// 2. **Domain rules enforcement**: The Account domain objects enforce business logic 
        ///    like insufficient funds.
        /// 3. **Retry mechanism**: Transient failures during SaveTransaction (e.g., DbUpdateException) 
