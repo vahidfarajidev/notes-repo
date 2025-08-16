@@ -48,5 +48,6 @@
 
 - Any **DomainException** or **SystemException** bubbling up from Service or Repository layers.  
 - Middleware catches these exceptions and converts them to proper HTTP responses (e.g., 400 for domain violations, 500 for system errors).
+- So the idea is that SystemExceptions bubble up to the UI layer, where they are ultimately handled and logged—unless there is a specific reason to catch them earlier in the stack.
 
 **Professional note:** In advanced architectures like **CQRS** or large-scale projects, logging is usually **not done in this layer**. Middleware only maps exceptions to responses, while centralized logging is handled elsewhere for consistency and observability.
