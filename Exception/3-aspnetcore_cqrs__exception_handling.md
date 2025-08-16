@@ -198,41 +198,36 @@ namespace BankingApi.Application
         /// Key points:
         /// 1. Transactional consistency with BeginTransaction.
         /// 2. Domain rules enforced by Account entities.
-        /// 3. Retry for transient DbUpdateException.
-        /// 4. Logging delegated to pipeline (not here).
+        /// 3. Retry for transient DbUpdateException including all SaveChangesAsync operations.
+        /// 4. Logging delegated to pipeline/middleware.
         /// </summary>
         public async Task<Unit> Handle(TransferCommand request, CancellationToken cancellationToken)
         {
-            await using var transactionScope = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-            var fromAccount = await _repository.GetAccountAsync(request.FromAccountId);
-            var toAccount = await _repository.GetAccountAsync(request.ToAccountId);
-
-            fromAccount.Withdraw(request.Amount);
-            toAccount.Deposit(request.Amount);
-
-            await _repository.UpdateBalanceAsync(fromAccount.Id, fromAccount.Balance);
-            await _repository.UpdateBalanceAsync(toAccount.Id, toAccount.Balance);
-
-            var transaction = new Transaction
-            {
-                FromAccountId = request.FromAccountId,
-                ToAccountId = request.ToAccountId,
-                Amount = request.Amount
-            };
-
             int retries = 3;
             for (int attempt = 1; attempt <= retries; attempt++)
             {
                 try
                 {
+                    await using var transactionScope = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+                    var fromAccount = await _repository.GetAccountAsync(request.FromAccountId);
+                    var toAccount = await _repository.GetAccountAsync(request.ToAccountId);
+
+                    fromAccount.Withdraw(request.Amount);
+                    toAccount.Deposit(request.Amount);
+
+                    await _repository.UpdateBalanceAsync(fromAccount);
+                    await _repository.UpdateBalanceAsync(toAccount);
+
+                    var transaction = new Transaction(request.FromAccountId, request.ToAccountId, request.Amount);
                     await _repository.SaveTransactionAsync(transaction);
+
                     await transactionScope.CommitAsync(cancellationToken);
                     return Unit.Value;
                 }
                 catch (DbUpdateException) when (attempt < retries)
                 {
-                    await Task.Delay(500, cancellationToken);
+                    await Task.Delay(500, cancellationToken); // simple backoff
                 }
             }
 
