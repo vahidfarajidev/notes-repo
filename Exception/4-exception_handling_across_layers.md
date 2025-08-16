@@ -55,3 +55,17 @@
 - So the idea is that SystemExceptions bubble up to the UI layer, where they are ultimately handled and logged—unless there is a specific reason to catch them earlier in the stack.
 
 **Professional note:** In advanced architectures like **CQRS** or large-scale projects, logging is usually **not done in this layer**. Middleware only maps exceptions to responses, while centralized logging is handled elsewhere for consistency and observability.
+
+# Professional Tip: Input Validation and Service Layer Responsibilities
+
+- **Domain is the source of truth:** All core business rules and validations should be enforced inside the Domain.  
+  *Example:* `Account.Withdraw` ensures that the balance is sufficient and the amount is positive.
+
+- **Service orchestration:** The Service layer's main responsibility is to coordinate multiple Repositories or Aggregates and manage transaction logic or retry mechanisms.
+
+- **Optional validation:** Input validation in the Service layer is only necessary if the operation involves multiple Aggregates or Repositories and the Domain cannot fully enforce it.
+
+- **Avoid duplicate checks:** Re-validating inputs already checked by the Domain leads to redundant code and unnecessary complexity.
+
+**Summary:** The Service layer **trusts the Domain to validate inputs** and focuses on executing complex scenarios and multi-step transactions.
+
