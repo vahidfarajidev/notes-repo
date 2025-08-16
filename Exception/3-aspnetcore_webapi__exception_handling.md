@@ -98,6 +98,16 @@ namespace BankingApi.Domain.Exceptions
 
 ## 2️⃣ Repository Layer
 
+The Repository layer does not catch or log system exceptions like SqlException or DbUpdateException.
+Instead, it allows these exceptions to bubble up to the Service layer or the global middleware.
+This approach ensures:
+
+1. The Repository focuses solely on data access and domain integrity.
+
+2. Centralized logging and consistent HTTP response handling happens in middleware.
+
+3. Transient exceptions can be retried or handled at a higher layer without losing context.
+
 ```csharp
 using BankingApi.Domain;
 using BankingApi.Domain.Exceptions;
