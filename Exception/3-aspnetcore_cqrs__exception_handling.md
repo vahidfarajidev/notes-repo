@@ -241,9 +241,14 @@ namespace BankingApi.Application
 
 ```csharp
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace BankingApi.Application
 {
+    /// <summary>
+    /// Pipeline behavior for logging all MediatR requests and exceptions.
+    /// Logs before execution and on exceptions.
+    /// </summary>
     public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
@@ -258,12 +263,29 @@ namespace BankingApi.Application
             RequestHandlerDelegate<TResponse> next,
             CancellationToken cancellationToken)
         {
+            // Log before executing the handler
+            _logger.LogInformation(
+                "Handling {RequestType} with data: {@Request}",
+                typeof(TRequest).Name,
+                request
+            );
+
             try
             {
-                return await next();
+                var response = await next();
+                
+                // Optional: Log after successful execution
+                _logger.LogInformation(
+                    "Handled {RequestType} successfully with response: {@Response}",
+                    typeof(TRequest).Name,
+                    response
+                );
+
+                return response;
             }
             catch (Exception ex)
             {
+                // Log exception with full context
                 _logger.LogError(
                     ex,
                     "Error handling {RequestType} with data: {@Request}",
