@@ -207,6 +207,93 @@ namespace BankingApi.Services
                 }
             }
         }
+
+       /// <summary>
+       /// Performs a money transfer between two accounts in an **atomic and reliable** manner.
+       /// <para>
+       /// This method demonstrates professional exception handling, transactional consistency, 
+       /// and retry logic for transient database failures.
+       /// </para>
+       /// <para>
+       /// Key points:
+       /// 1. **Atomicity with database transaction**: Withdraw, Deposit, and SaveTransaction 
+       ///    occur in a single transaction. If anything fails, all changes are rolled back.
+       /// 2. **Domain rules enforcement**: The Account domain objects enforce business logic 
+       ///    like insufficient funds.
+       /// 3. **Retry mechanism**: Transient failures during SaveTransaction (e.g., DbUpdateException) 
+       ///    are retried up to 3 times with a delay.
+       /// 4. **Logging**: All retries and final failures are logged for auditing and diagnostics.
+       /// 5. **Exception bubbling**: Any unhandled exception bubbles up to the middleware layer, 
+       ///    which handles logging and HTTP response mapping.
+       /// </para>
+       /// </summary>
+       /// <param name="fromAccountId">Source account ID</param>
+       /// <param name="toAccountId">Destination account ID</param>
+       /// <param name="amount">Amount to transfer</param>
+       public async Task TransferAsync(string fromAccountId, string toAccountId, decimal amount)
+       {
+           // Begin a database transaction for atomicity
+           await using var transactionScope = await _dbContext.Database.BeginTransactionAsync();
+       
+           try
+           {
+               // Retrieve account entities
+               var fromAccount = await _repository.GetAccountAsync(fromAccountId);
+               var toAccount = await _repository.GetAccountAsync(toAccountId);
+       
+               // Apply domain rules (withdraw/deposit)
+               fromAccount.Withdraw(amount);
+               toAccount.Deposit(amount);
+       
+               // Update balances in the database
+               await _repository.UpdateBalanceAsync(fromAccount.Id, fromAccount.Balance);
+               await _repository.UpdateBalanceAsync(toAccount.Id, toAccount.Balance);
+       
+               // Prepare transaction record
+               var transaction = new Transaction
+               {
+                   FromAccountId = fromAccountId,
+                   ToAccountId = toAccountId,
+                   Amount = amount
+               };
+       
+               // Retry mechanism for transient failures during SaveTransaction
+               int retries = 3;
+               for (int attempt = 1; attempt <= retries; attempt++)
+               {
+                   try
+                   {
+                       await _repository.SaveTransactionAsync(transaction);
+                       _logger.LogInformation(
+                           "Transaction saved successfully. TxId={TxId}", 
+                           transaction.Id
+                       );
+                       // Exit loop if successful
+                       break;
+                   }
+                   catch (DbUpdateException ex) when (attempt < retries)
+                   {
+                       _logger.LogWarning(
+                           ex, 
+                           "Database error saving transaction. Attempt {Attempt}/{Retries}. TxId={TxId}", 
+                           attempt, retries, transaction.Id
+                       );
+                       await Task.Delay(500);
+                   }
+               }
+       
+               // Commit the transaction if all operations succeeded
+               await transactionScope.CommitAsync();
+           }
+           catch (Exception ex)
+           {
+               // Log final failure
+               _logger.LogError(ex, "Transfer failed from {From} to {To} for amount {Amount}", fromAccountId, toAccountId, amount);
+       
+               // Transaction automatically rolls back because CommitAsync was not called
+               throw; // Bubble up to middleware for global handling
+           }
+       }
     }
 }
 ```
