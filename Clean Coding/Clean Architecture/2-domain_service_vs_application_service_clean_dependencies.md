@@ -249,3 +249,4 @@ Ask these before placing logic:
 ## Conclusion
 
 Keep **Domain Services pure** and free from data access. Let **Application Services** orchestrate repositories and pass the required facts into the domain. This separation yields cleaner code, easier tests, and architectures that scale with complexity.
+according to the principle of layer separation in DDD, a Domain Service should not even depend on a Repository interface, because its responsibility is only the rules. The Application Service acts as the bridge between the Repository and the Domain Service.
