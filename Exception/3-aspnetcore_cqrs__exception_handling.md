@@ -384,6 +384,15 @@ namespace BankingApi.Application
             _dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Performs a money transfer between two accounts in an atomic and reliable manner.
+        /// Key points:
+        /// 1. Transactional consistency with BeginTransaction.
+        /// 2. Domain rules enforced by Account entities.
+        /// 3. Retry for transient DbUpdateException including all SaveChangesAsync operations.
+        /// 4. Logging delegated to pipeline/middleware.
+        /// 5. Each retry starts a new transaction, and if all retries fail, the exception is rethrown.
+        /// </summary>
         public async Task<Unit> Handle(TransferCommand request, CancellationToken cancellationToken)
         {
             if (request.Amount <= 0)
