@@ -550,22 +550,42 @@ namespace BankingApi.Api.Middleware
             }
             catch (DomainException ex)
             {
-                // Log domain exceptions as warnings
-                _logger.LogWarning(ex, "Domain exception occurred");
+                // This log complements the central MediatR logging pipeline
+                // Logs domain exceptions with warning level
+                _logger.LogWarning(
+                    ex,
+                    "Domain exception occurred for HTTP request {Method} {Path} with status {StatusCode} and message: {Message}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    (int)HttpStatusCode.BadRequest,
+                    ex.Message
+                );
+
+                // Set HTTP response for client: HTTP 400 Bad Request
                 await WriteErrorResponseAsync(context, HttpStatusCode.BadRequest, ex.Message);
             }
             catch (Exception ex)
             {
-                // Log unexpected exceptions as errors
-                _logger.LogError(ex, "Unhandled exception occurred");
+                // This log complements the central MediatR logging pipeline
+                // Logs unexpected exceptions with error level
+                _logger.LogError(
+                    ex,
+                    "Unhandled exception occurred for HTTP request {Method} {Path} with status {StatusCode}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    (int)HttpStatusCode.InternalServerError
+                );
+
+                // Set HTTP response for client: HTTP 500 Internal Server Error
                 await WriteErrorResponseAsync(context, HttpStatusCode.InternalServerError, "An unexpected error occurred");
             }
         }
 
         private static async Task WriteErrorResponseAsync(HttpContext context, HttpStatusCode statusCode, string message)
         {
+            // Set HTTP response status code and content type
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)statusCode;
+            context.Response.StatusCode = (int)statusCode; // HTTP status code returned to client
 
             var errorResponse = new
             {
