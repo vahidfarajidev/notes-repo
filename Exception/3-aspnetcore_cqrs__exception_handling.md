@@ -600,6 +600,7 @@ namespace BankingApi.Application
 using System.Net;
 using System.Text.Json;
 using BankingApi.Domain;
+using BankingApi.Application; // <-- Added for ApplicationServiceException
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -622,10 +623,12 @@ namespace BankingApi.Api.Middleware
             {
                 await _next(context);
             }
+            // -------------------------------
+            // Handle specific domain exception for resource not found
+            // Maps to HTTP 404 Not Found
+            // -------------------------------
             catch (DomainException ex) when (ex is AccountNotFoundException)
             {
-                // This log complements the central MediatR logging pipeline
-                // Logs resource-not-found domain exceptions with warning level
                 _logger.LogWarning(
                     ex,
                     "Resource not found for HTTP request {Method} {Path} with status {StatusCode} and message: {Message}",
@@ -635,13 +638,14 @@ namespace BankingApi.Api.Middleware
                     ex.Message
                 );
 
-                // Set HTTP response for client: HTTP 404 Not Found
                 await WriteErrorResponseAsync(context, HttpStatusCode.NotFound, ex.Message);
             }
+            // -------------------------------
+            // Handle general domain exceptions
+            // Maps to HTTP 400 Bad Request
+            // -------------------------------
             catch (DomainException ex)
             {
-                // This log complements the central MediatR logging pipeline
-                // Logs domain exceptions with warning level
                 _logger.LogWarning(
                     ex,
                     "Domain exception occurred for HTTP request {Method} {Path} with status {StatusCode} and message: {Message}",
@@ -651,13 +655,32 @@ namespace BankingApi.Api.Middleware
                     ex.Message
                 );
 
-                // Set HTTP response for client: HTTP 400 Bad Request
                 await WriteErrorResponseAsync(context, HttpStatusCode.BadRequest, ex.Message);
             }
+            // -------------------------------
+            // Handle Application-layer exceptions
+            // These are not domain rule violations, but use-case or orchestration failures
+            // Maps to HTTP 500 Internal Server Error
+            // -------------------------------
+            catch (ApplicationServiceException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Application service exception occurred for HTTP request {Method} {Path} with status {StatusCode} and message: {Message}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    (int)HttpStatusCode.InternalServerError,
+                    ex.Message
+                );
+                // You can provide a general message to the user without exposing internal details
+                await WriteErrorResponseAsync(context, HttpStatusCode.InternalServerError, ex.Message);
+            }
+            // -------------------------------
+            // Handle unexpected exceptions
+            // Maps to HTTP 500 Internal Server Error
+            // -------------------------------
             catch (Exception ex)
             {
-                // This log complements the central MediatR logging pipeline
-                // Logs unexpected exceptions with error level
                 _logger.LogError(
                     ex,
                     "Unhandled exception occurred for HTTP request {Method} {Path} with status {StatusCode}",
@@ -666,16 +689,17 @@ namespace BankingApi.Api.Middleware
                     (int)HttpStatusCode.InternalServerError
                 );
 
-                // Set HTTP response for client: HTTP 500 Internal Server Error
                 await WriteErrorResponseAsync(context, HttpStatusCode.InternalServerError, "An unexpected error occurred");
             }
         }
 
+        // -------------------------------
+        // Helper method to write JSON error response
+        // -------------------------------
         private static async Task WriteErrorResponseAsync(HttpContext context, HttpStatusCode statusCode, string message)
         {
-            // Set HTTP response status code and content type
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)statusCode; // HTTP status code returned to client
+            context.Response.StatusCode = (int)statusCode;
 
             var errorResponse = new
             {
