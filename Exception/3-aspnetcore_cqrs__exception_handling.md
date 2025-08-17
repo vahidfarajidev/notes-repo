@@ -191,6 +191,7 @@ public async Task<Account?> GetAccountAsync(string id)
 Then higher up (for example, in the Application Layer) you decide how to handle null.
 
 
+
 ```csharp
 using BankingApi.Domain;
 using Microsoft.EntityFrameworkCore;
