@@ -239,6 +239,14 @@ namespace BankingApi.Application
 
 ## MediatR Pipeline Behavior (Centralized Logging)
 
+Instead of logging exceptions separately in each part of the application (API, UI, background jobs, etc.), we define a **centralized pipeline** for logging.
+
+This pipeline can be implemented in one of the following ways:
+
+- **MediatR behaviors**: All requests (Requests/Commands/Queries) pass through a behavior before reaching their handler. Logging and exception handling can be placed there.  
+- **Global filters** (e.g., in ASP.NET Core): Filters that are applied to all controllers, capturing exceptions in one place and logging them consistently.  
+- **Infrastructure services / middleware**: A layer in the infrastructure where all requests (from APIs, jobs, or message handlers) pass through, allowing centralized exception handling and logging.  
+
 ```csharp
 using MediatR;
 using Microsoft.Extensions.Logging;
