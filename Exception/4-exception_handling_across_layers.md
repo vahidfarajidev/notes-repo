@@ -31,7 +31,7 @@
 
 **Behavior:** Repository typically does **not catch SystemExceptions**; they are allowed to **bubble up** to higher layers.
 
-Exactly, according to **DDD and layered architecture principles**, putting a `try-catch` and directly throwing `SqlException` inside the Repository is generally **not recommended**. 😅
+Exactly, according to **DDD and layered architecture principles**, putting a `try-catch` and directly throwing `SqlException` inside the Repository is generally **not recommended**.
 
 ### Reasons:
 
