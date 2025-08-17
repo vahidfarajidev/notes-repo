@@ -173,19 +173,21 @@ for example, an AccountNotFoundException when null.
 Better alternatives
 You can create a custom domain exception like:
 
+```csharp
 public class AccountNotFoundException : DomainException
 {
     public AccountNotFoundException(string accountId) 
         : base($"Account with id {accountId} not found.") {}
 }
-
+```
 Or even better, instead of throwing an exception, you can use the Result Pattern or Option/Maybe:
 
+```csharp
 public async Task<Account?> GetAccountAsync(string id)
 {
     return await _dbContext.Accounts.FindAsync(id);
 }
-
+```
 Then higher up (for example, in the Application Layer) you decide how to handle null.
 
 
