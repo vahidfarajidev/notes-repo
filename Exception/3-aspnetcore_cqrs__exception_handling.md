@@ -237,7 +237,7 @@ namespace BankingApi.Infrastructure
 {
     public interface IAccountRepository
     {
-        Task<Account> GetAccountAsync(string id);
+        Task<Account?> GetAccountAsync(string id);
         Task UpdateBalanceAsync(Account account);
         Task SaveTransactionAsync(Transaction transaction);
     }
@@ -251,17 +251,15 @@ namespace BankingApi.Infrastructure
             _dbContext = dbContext;
         }
 
-        public async Task<Account> GetAccountAsync(string id)
+        public async Task<Account?> GetAccountAsync(string id)
         {
-            var account = await _dbContext.Accounts.FindAsync(id);
-            if (account == null)
-                throw new KeyNotFoundException($"Account {id} not found.");
-            return account;
+	    // Returns only the data; does not throw any domain exceptions.
+            return await _dbContext.Accounts.FindAsync(id);
         }
 
         public async Task UpdateBalanceAsync(Account account)
         {
-            // EF will track changes to the account entity automatically
+            // EF automatically tracks changes to the entity.
             _dbContext.Update(account);
             await _dbContext.SaveChangesAsync();
         }
