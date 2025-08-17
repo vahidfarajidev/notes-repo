@@ -72,6 +72,74 @@ Exactly, according to **DDD and layered architecture principles**, putting a `tr
 - Mostly **DomainException**, e.g., when a combined business rule is violated.  
 - Typically **does not catch SystemException**, unless implementing retry or fallback mechanisms.
 
+# Application Layer Exception Handling & Logging Behavior
+
+Here’s a step-by-step explanation for two common questions regarding exception handling in the Application layer of a DDD-based system.
+
+---
+
+### 1️⃣ Is it correct **not to put try/catch in the Application layer**?
+
+✔ **Yes, in this scenario it is correct**, because:
+
+* The **Application layer** is responsible for executing the Use Case and enforcing Domain Rules, not for handling infrastructure exceptions like database failures.
+* Exceptions such as `DbUpdateException` are **infrastructure-level errors** and are better handled and logged by **Middleware or Pipeline behaviors**.
+* Adding try/catch in the Application layer for all database exceptions would make the code cluttered with boilerplate and could lose important log details.
+* Instead, the exception is allowed to bubble up so that the Middleware decides:
+  * What message to show to the user
+  * What details to log
+
+💡 **Principle:** The Application layer should handle **Use Case-specific exceptions** (e.g., `InvalidAmountException` or `AccountNotFoundException`) but let infrastructure exceptions propagate to Middleware for proper handling.
+
+---
+
+### 2️⃣ Will these exceptions be logged in the Logging Behavior?
+
+✅ **Yes, if you have a proper MediatR pipeline/Behavior logging setup**, these exceptions will typically be logged.
+
+* In a MediatR Logging Behavior:
+
+  * The request is logged **before** the handler executes.
+  * The response or exception is logged **after** the handler executes.
+
+* Exceptions thrown in the Application layer (e.g., `DbUpdateException`) are **caught by the Logging Behavior**, logged, and then rethrown.
+* The HTTP Middleware can then produce an appropriate **500 Internal Server Error response**.
+
+💡 **Note:** There are effectively two layers of logging:
+
+1. **Pipeline/Behavior logs** – mainly for internal debugging and detailed information.
+2. **Middleware logs** – for HTTP requests, monitoring, and user/system reporting.
+
+---
+
+### Step-by-step Exception Flow
+
+1. **Application layer without try/catch**
+
+   * If a handler like `TransferCommandHandler` throws an exception such as `DbUpdateException` and does not catch it, the exception propagates up to the **MediatR pipeline**.
+
+2. **MediatR Logging Behavior**
+
+   * A Logging Behavior wraps the handler:
+
+     ```text
+     LoggingBehavior -> TransferCommandHandler -> LoggingBehavior
+     ```
+
+   * When the handler throws an exception, the Behavior can **catch it, log it, and rethrow**.
+   * Even without a try/catch in the handler, the exception is still logged.
+
+3. **Middleware / UI Layer**
+
+   * After passing through the Behavior, the exception reaches the Middleware.
+   * Middleware processes the exception and produces a suitable **HTTP response** (e.g., 500 Internal Server Error).
+
+✅ **Conclusion:** Even without try/catch in the Application layer, exceptions are still logged by the Behavior and propagated upwards.  
+
+---
+
+If desired, a **diagram showing the exception flow from Repository → Application Handler → Logging Behavior → Middleware → UI** can be provided to make the process fully transparent.
+
 ---
 
 ## 4️⃣ Controller / Middleware (UI Layer)
