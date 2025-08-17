@@ -318,8 +318,13 @@ namespace BankingApi.Application
                 {
                     await using var transactionScope = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-                    var fromAccount = await _repository.GetAccountAsync(request.FromAccountId);
-                    var toAccount = await _repository.GetAccountAsync(request.ToAccountId);
+					var fromAccount = await _repository.GetAccountAsync(request.FromAccountId);
+					if (fromAccount == null)
+					    throw new AccountNotFoundException(request.FromAccountId);
+					
+					var toAccount = await _repository.GetAccountAsync(request.ToAccountId);
+					if (toAccount == null)
+					    throw new AccountNotFoundException(request.ToAccountId);
 
                     fromAccount.Withdraw(request.Amount);
                     toAccount.Deposit(request.Amount);
