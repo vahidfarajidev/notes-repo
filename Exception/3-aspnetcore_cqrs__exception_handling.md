@@ -59,6 +59,10 @@ namespace BankingApi.Domain
     // -------------------------------
     // Base Domain Exception
     // -------------------------------
+    /// <summary>
+    /// Base class for all domain-related exceptions.
+    /// Domain exceptions represent violations of business rules.
+    /// </summary>
     public abstract class DomainException : Exception
     {
         protected DomainException(string message) : base(message) { }
@@ -100,6 +104,10 @@ namespace BankingApi.Domain
     // -------------------------------
     // Account Aggregate
     // -------------------------------
+    /// <summary>
+    /// Represents a bank account and enforces domain rules for withdrawals and deposits.
+    /// Domain enforces all input validation and business logic.
+    /// </summary>
     public class Account
     {
         public string Id { get; private set; }
@@ -149,6 +157,10 @@ namespace BankingApi.Domain
     // -------------------------------
     // Transaction Entity
     // -------------------------------
+    /// <summary>
+    /// Represents a money transfer transaction between two accounts.
+    /// All domain validation should occur before creating a transaction instance.
+    /// </summary>
     public class Transaction
     {
         public Guid Id { get; private set; }
