@@ -384,6 +384,10 @@ namespace BankingApi.Application
                 try
                 {
                     // Begin database transaction
+                    // Each retry starts a new transaction.
+                    // If a DbUpdateException occurs, the previous transaction is automatically rolled back (thanks to await using).
+                    // After the last attempt, if it still fails, the exception is re-thrown.
+
                     await using var transactionScope = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
                     // Load accounts
