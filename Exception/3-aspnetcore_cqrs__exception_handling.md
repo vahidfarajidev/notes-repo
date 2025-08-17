@@ -548,6 +548,22 @@ namespace BankingApi.Api.Middleware
             {
                 await _next(context);
             }
+            catch (DomainException ex) when (ex is AccountNotFoundException)
+            {
+                // This log complements the central MediatR logging pipeline
+                // Logs resource-not-found domain exceptions with warning level
+                _logger.LogWarning(
+                    ex,
+                    "Resource not found for HTTP request {Method} {Path} with status {StatusCode} and message: {Message}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    (int)HttpStatusCode.NotFound,
+                    ex.Message
+                );
+
+                // Set HTTP response for client: HTTP 404 Not Found
+                await WriteErrorResponseAsync(context, HttpStatusCode.NotFound, ex.Message);
+            }
             catch (DomainException ex)
             {
                 // This log complements the central MediatR logging pipeline
