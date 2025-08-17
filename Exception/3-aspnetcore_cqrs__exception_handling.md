@@ -388,6 +388,14 @@ namespace BankingApi.Infrastructure
 ## Service Layer (CQRS Command Handler)
 
 ```csharp
+// -------------------------------
+// APPLICATION / SERVICE LAYER
+// -------------------------------
+using BankingApi.Domain;
+using BankingApi.Infrastructure;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
 namespace BankingApi.Application
 {
     /// <summary>
@@ -402,10 +410,7 @@ namespace BankingApi.Application
         {
         }
     }
-}
 
-namespace BankingApi.Application
-{
     public class TransferFailedException : ApplicationException
     {
         public TransferFailedException(string message, Exception? inner = null)
@@ -417,18 +422,7 @@ namespace BankingApi.Application
         public ExternalServiceUnavailableException(string message, Exception? inner = null)
             : base(message, inner) { }
     }
-}
 
-// -------------------------------
-// APPLICATION / SERVICE LAYER
-// -------------------------------
-using BankingApi.Domain;
-using BankingApi.Infrastructure;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
-namespace BankingApi.Application
-{
     public class TransferCommand : IRequest
     {
         public string FromAccountId { get; init; }
