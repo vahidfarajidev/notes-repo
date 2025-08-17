@@ -403,21 +403,21 @@ namespace BankingApi.Application
     /// These are not domain rule violations, but orchestration / use case failures
     /// (e.g., retries exhausted, cross-service communication errors, etc.).
     /// </summary>
-    public abstract class ApplicationException : Exception
+    public abstract class ApplicationServiceException : Exception
     {
-        protected ApplicationException(string message, Exception? innerException = null)
+        protected ApplicationServiceException(string message, Exception? innerException = null)
             : base(message, innerException)
         {
         }
     }
 
-    public class TransferFailedException : ApplicationException
+    public class TransferFailedException : ApplicationServiceException
     {
         public TransferFailedException(string message, Exception? inner = null)
             : base(message, inner) { }
     }
 
-    public class ExternalServiceUnavailableException : ApplicationException
+    public class ExternalServiceUnavailableException : ApplicationServiceException
     {
         public ExternalServiceUnavailableException(string message, Exception? inner = null)
             : base(message, inner) { }
@@ -436,9 +436,10 @@ namespace BankingApi.Application
         private readonly TransferDomainService _domainService;
         private readonly BankingDbContext _dbContext;
 
-        public TransferCommandHandler(IAccountRepository repository, BankingDbContext dbContext)
+        public TransferCommandHandler(IAccountRepository repository, TransferDomainService domainService, BankingDbContext dbContext)
         {
             _repository = repository;
+            _domainService = domainService;
             _dbContext = dbContext;
         }
 
