@@ -625,6 +625,6 @@ Summary
 
 - Pipeline Behavior: Centralized logging across commands/queries.
 
-- Middleware: Maps exceptions to HTTP responses only (no logging here).
+- Middleware: Maps exceptions to HTTP responses and complements central logging (includes HTTP status, request path, etc.).
 
 This ensures clean separation of concerns, centralized logging, and reliable error handling in a CQRS-style ASP.NET Core application.
