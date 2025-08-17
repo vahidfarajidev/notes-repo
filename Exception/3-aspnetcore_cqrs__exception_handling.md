@@ -119,6 +119,29 @@ namespace BankingApi.Domain
 ```
 ## Repository Layer
 
+# 📌 Exceptions
+
+## DomainException
+- Intrinsically related to domain logic.
+- Usually created and managed in the **Domain Layer**, not in the Repository.
+- For example, if data is read from the DB that violates domain rules (e.g., a negative balance that should never exist in the domain), the Repository should simply fetch the data. The Domain Layer then validates it, and if there's an issue, it throws a `DomainException`.
+- Therefore, the Repository does **not directly throw DomainExceptions**; it returns "raw" data and lets the Domain decide whether it’s valid.
+
+## SystemException
+- Originates from infrastructure concerns, such as:
+  - `SqlException`
+  - `DbUpdateException`
+  - `TimeoutException`
+- Repositories usually **do not catch these**, except for:
+  - Logging, or
+  - Wrapping them into an **Infrastructure-layer Exception** before letting them bubble up.
+
+## 📌 Common Behavior
+- The Repository is considered part of the **Infrastructure Layer**.
+- It should **not be involved in domain logic**.
+- System-related errors (DB, Network, API) bubble up to the **Application Layer**, which decides how to handle them (retry, fallback, user message).
+- Domain-related errors belong in the **Domain Layer**.
+
 ```csharp
 using BankingApi.Domain;
 using Microsoft.EntityFrameworkCore;
