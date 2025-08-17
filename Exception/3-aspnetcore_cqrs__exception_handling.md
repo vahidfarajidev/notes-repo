@@ -529,16 +529,13 @@ namespace BankingApi.Api.Middleware
             }
             catch (DomainException ex)
             {
+                // Log domain exceptions as warnings
                 _logger.LogWarning(ex, "Domain exception occurred");
                 await WriteErrorResponseAsync(context, HttpStatusCode.BadRequest, ex.Message);
             }
-            catch (KeyNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "Resource not found");
-                await WriteErrorResponseAsync(context, HttpStatusCode.NotFound, ex.Message);
-            }
             catch (Exception ex)
             {
+                // Log unexpected exceptions as errors
                 _logger.LogError(ex, "Unhandled exception occurred");
                 await WriteErrorResponseAsync(context, HttpStatusCode.InternalServerError, "An unexpected error occurred");
             }
