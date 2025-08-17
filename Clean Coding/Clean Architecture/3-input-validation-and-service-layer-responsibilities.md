@@ -176,3 +176,28 @@ public class Account
     }
 }
 ```
+
+# ✅ Using Domain ValueObjects in Application Service
+
+In DDD architecture, the **Application Service layer** is responsible for orchestration and coordinating between Aggregates and Repositories, and does **not** need to re-implement business rules. Therefore:
+
+- If a **ValueObject** exists in the Domain layer (e.g., `BirthDate` or `Amount`) that enforces invariants, the Application Service **can use the same ValueObject**.
+- **Note:** The Service can perform a **fail-fast validation** (e.g., checking string input format) before instantiating the ValueObject.
+
+## Example:
+
+```csharp
+// Application Service
+string input = "2000-02-31"; // user input
+if (!DateTime.TryParse(input, out var date))
+    throw new ApplicationException("Invalid birth date format."); // fail-fast
+
+var birthDate = new BirthDate(date); // Domain invariant rules are enforced here
+```
+
+## Summary
+
+- The Service **can and should** use Domain ValueObjects.
+- The Service handles parsing and fail-fast validation.
+- The Domain ValueObject enforces invariants and business rules.
+
