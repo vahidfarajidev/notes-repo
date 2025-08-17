@@ -304,16 +304,21 @@ namespace BankingApi.Application
 ```csharp
 using System.Net;
 using System.Text.Json;
+using BankingApi.Domain;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace BankingApi.Api.Middleware
 {
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -322,21 +327,35 @@ namespace BankingApi.Api.Middleware
             {
                 await _next(context);
             }
+            catch (DomainException ex)
+            {
+                _logger.LogWarning(ex, "Domain exception occurred");
+                await WriteErrorResponseAsync(context, HttpStatusCode.BadRequest, ex.Message);
+            }
             catch (KeyNotFoundException ex)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }));
+                _logger.LogWarning(ex, "Resource not found");
+                await WriteErrorResponseAsync(context, HttpStatusCode.NotFound, ex.Message);
             }
-            catch (InsufficientFundsException ex)
+            catch (Exception ex)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = ex.Message }));
+                _logger.LogError(ex, "Unhandled exception occurred");
+                await WriteErrorResponseAsync(context, HttpStatusCode.InternalServerError, "An unexpected error occurred");
             }
-            catch (Exception)
+        }
+
+        private static async Task WriteErrorResponseAsync(HttpContext context, HttpStatusCode statusCode, string message)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)statusCode;
+
+            var errorResponse = new
             {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new { error = "An unexpected error occurred" }));
-            }
+                error = message,
+                status = context.Response.StatusCode
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
         }
     }
 }
