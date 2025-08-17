@@ -13,6 +13,43 @@ However, in more advanced architectures (e.g., **CQRS** or distributed systems),
 
 ## Domain Layer
 
+# Why the Domain Should Not Throw `System.Exception`
+
+In a properly layered Domain-Driven Design (DDD) architecture, the **Domain layer** should never directly throw system-level exceptions such as `System.Exception`, `ArgumentException`, `NullReferenceException`, or database-specific exceptions like `SqlException`. Here’s why:
+
+## 1. Domain Only Manages Business Rules
+
+The Domain layer should focus purely on business logic:
+
+- Is the inventory sufficient?
+- Is the payment amount valid?
+
+If the Domain throws exceptions like `ArgumentException` or `NullReferenceException`, it introduces **system-level concerns** into the domain, breaking its purity.
+
+## 2. Greater Flexibility
+
+By using **domain-specific exceptions** (e.g., `DomainException` and its subclasses), the Application layer can decide how to handle errors:
+
+- Show a user-friendly message
+- Log the error
+- Retry the operation
+
+If the Domain throws system exceptions, the Application layer has to catch them and map them to domain exceptions, which adds unnecessary complexity.
+
+## 3. Alignment with DDD Principles
+
+DDD advocates that the Domain should be **free of infrastructure dependencies**:
+
+- System exceptions are often tied to the runtime or underlying infrastructure.
+- The Domain should only use **domain-specific exceptions** to represent business rule violations and exceptional behaviors.
+
+## Summary
+
+✅ **Domain → only `DomainException` and its subclasses**  
+❌ **Domain → should not throw `ArgumentException`, `SqlException`, or other system exceptions**  
+
+**Application / Infrastructure layers** are responsible for interacting with the system and mapping infrastructure errors to appropriate behaviors.
+
 ```csharp
 namespace BankingApi.Domain
 {
@@ -43,6 +80,18 @@ namespace BankingApi.Domain
             : base($"Invalid amount: {amount}. Must be greater than zero.") { }
     }
 
+    public class InvalidAccountIdException : DomainException
+    {
+        public InvalidAccountIdException(string accountId)
+            : base($"Invalid account ID: {accountId}.") { }
+    }
+
+    public class InvalidTargetAccountException : DomainException
+    {
+        public InvalidTargetAccountException()
+            : base("Target account cannot be null.") { }
+    }
+
     // -------------------------------
     // Account Aggregate
     // -------------------------------
@@ -58,9 +107,10 @@ namespace BankingApi.Domain
         public Account(string id, decimal initialBalance = 0)
         {
             if (string.IsNullOrWhiteSpace(id))
-                throw new ArgumentException("Account ID cannot be empty.", nameof(id));
+                throw new InvalidAccountIdException(id);
+
             if (initialBalance < 0)
-                throw new ArgumentException("Initial balance cannot be negative.", nameof(initialBalance));
+                throw new InvalidAmountException(initialBalance);
 
             Id = id;
             Balance = initialBalance;
@@ -84,6 +134,15 @@ namespace BankingApi.Domain
 
             Balance += amount;
         }
+
+        public void TransferTo(Account target, decimal amount)
+        {
+            if (target == null)
+                throw new InvalidTargetAccountException();
+
+            Withdraw(amount);
+            target.Deposit(amount);
+        }
     }
 
     // -------------------------------
@@ -95,24 +154,33 @@ namespace BankingApi.Domain
     /// </summary>
     public class Transaction
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string FromAccountId { get; set; }
-        public string ToAccountId { get; set; }
-        public decimal Amount { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public Guid Id { get; private set; }
+        public string FromAccountId { get; private set; }
+        public string ToAccountId { get; private set; }
+        public decimal Amount { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
-        public Transaction(string fromAccountId, string toAccountId, decimal amount)
+        private Transaction(string fromAccountId, string toAccountId, decimal amount)
         {
-            if (string.IsNullOrWhiteSpace(fromAccountId))
-                throw new ArgumentException("FromAccountId cannot be empty.", nameof(fromAccountId));
-            if (string.IsNullOrWhiteSpace(toAccountId))
-                throw new ArgumentException("ToAccountId cannot be empty.", nameof(toAccountId));
-            if (amount <= 0)
-                throw new ArgumentException("Transaction amount must be positive.", nameof(amount));
-
             FromAccountId = fromAccountId;
             ToAccountId = toAccountId;
             Amount = amount;
+            CreatedAt = DateTime.UtcNow;
+            Id = Guid.NewGuid();
+        }
+
+        public static Transaction Create(string fromAccountId, string toAccountId, decimal amount)
+        {
+            if (string.IsNullOrWhiteSpace(fromAccountId))
+                throw new InvalidAccountIdException(fromAccountId);
+
+            if (string.IsNullOrWhiteSpace(toAccountId))
+                throw new InvalidAccountIdException(toAccountId);
+
+            if (amount <= 0)
+                throw new InvalidAmountException(amount);
+
+            return new Transaction(fromAccountId, toAccountId, amount);
         }
     }
 }
