@@ -388,6 +388,37 @@ namespace BankingApi.Infrastructure
 ## Service Layer (CQRS Command Handler)
 
 ```csharp
+namespace BankingApi.Application
+{
+    /// <summary>
+    /// Base exception type for application-layer errors.
+    /// These are not domain rule violations, but orchestration / use case failures
+    /// (e.g., retries exhausted, cross-service communication errors, etc.).
+    /// </summary>
+    public abstract class ApplicationException : Exception
+    {
+        protected ApplicationException(string message, Exception? innerException = null)
+            : base(message, innerException)
+        {
+        }
+    }
+}
+
+namespace BankingApi.Application
+{
+    public class TransferFailedException : ApplicationException
+    {
+        public TransferFailedException(string message, Exception? inner = null)
+            : base(message, inner) { }
+    }
+
+    public class ExternalServiceUnavailableException : ApplicationException
+    {
+        public ExternalServiceUnavailableException(string message, Exception? inner = null)
+            : base(message, inner) { }
+    }
+}
+
 // -------------------------------
 // APPLICATION / SERVICE LAYER
 // -------------------------------
@@ -477,6 +508,11 @@ namespace BankingApi.Application
                 {
                     // Retry with simple backoff
                     await Task.Delay(500 * attempt, cancellationToken);
+                }
+
+                catch (DbUpdateException ex) when (attempt == retries)
+                {
+                    throw new TransferFailedException("Transfer failed after multiple retries.", ex);
                 }
             }
 
