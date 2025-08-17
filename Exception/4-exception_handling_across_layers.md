@@ -1,19 +1,19 @@
 # Exception Handling Across Layers in a C# Web API
 
-## 1️⃣ Domain Layer
+# 1️⃣ Domain Layer
 
-**Purpose:** Maintain state and enforce business rules.
+**Purpose:**  
+Maintain entity state and enforce business rules. Domain entities and aggregates ensure consistency and prevent violations of domain rules.
 
-**Exceptions:**
+**Exceptions:**  
+- **DomainException:** Thrown when a domain rule is violated, e.g.:  
+    - `InsufficientFundsException` → when the account balance is insufficient.  
+    - `InvalidAmountException` → when a deposit or withdrawal amount is invalid.  
+    - `AccountNotFoundException` → when an account does not exist.  
+- **Input validation exceptions:** All input validation uses domain-specific exceptions, not system exceptions.
 
-- **DomainException:** Thrown when a domain rule is violated, e.g.:
-  - `InsufficientFundsException` → when the account balance is insufficient.
-  - `InvalidAmountException` → when a deposit or withdrawal amount is invalid.
-- **Parameter validation exceptions:** Thrown for invalid input parameters, e.g.:
-  - `ArgumentException`
-  - `ArgumentNullException`
-
-**Note:** System-level exceptions (e.g., database or I/O errors) generally do not occur in the Domain layer. The Domain focuses on enforcing business rules and validating inputs.
+**Note:**  
+System-level exceptions (e.g., database or I/O errors) generally do not occur in the Domain layer. The Domain focuses on enforcing business rules and validating inputs.
 
 ---
 
