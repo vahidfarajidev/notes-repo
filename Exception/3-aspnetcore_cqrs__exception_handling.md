@@ -101,6 +101,12 @@ namespace BankingApi.Domain
             : base($"Account with ID '{accountId}' was not found.") { }
     }
 
+    public class BusinessRuleViolationException : DomainException
+    {
+        public BusinessRuleViolationException(string message)
+            : base(message) { }
+    }
+
     // -------------------------------
     // Account Aggregate
     // -------------------------------
@@ -192,8 +198,24 @@ namespace BankingApi.Domain
             return new Transaction(fromAccountId, toAccountId, amount);
         }
     }
+
+
+    // -------------------------------
+    // Domain Service: Business Logic Across Aggregates
+    // -------------------------------
+    public class TransferDomainService
+    {
+        private const decimal DailyLimit = 10000m;
+    
+        public void ValidateDailyLimit(decimal totalTransfersToday, decimal amount)
+        {
+            if (totalTransfersToday + amount > DailyLimit)
+                throw new BusinessRuleViolationException("Daily transfer limit exceeded.");
+        }
+    }
 }
 ```
+
 ## Repository Layer
 
 # 📌 Exceptions
@@ -320,6 +342,7 @@ namespace BankingApi.Infrastructure
         Task<Account?> GetAccountAsync(string id);
         Task UpdateBalanceAsync(Account account);
         Task SaveTransactionAsync(Transaction transaction);
+        Task<decimal> GetTotalTransfersTodayAsync(string fromAccountId);
     }
 
     public class AccountRepository : IAccountRepository
@@ -349,6 +372,15 @@ namespace BankingApi.Infrastructure
             await _dbContext.Transactions.AddAsync(transaction);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<decimal> GetTotalTransfersTodayAsync(string fromAccountId)
+        {
+            var today = DateTime.UtcNow.Date;
+
+            return await _dbContext.Transactions
+                .Where(t => t.FromAccountId == fromAccountId && t.CreatedAt.Date == today)
+                .SumAsync(t => t.Amount);
+        }
     }
 }
 ```
@@ -376,6 +408,7 @@ namespace BankingApi.Application
     public class TransferCommandHandler : IRequestHandler<TransferCommand>
     {
         private readonly IAccountRepository _repository;
+        private readonly TransferDomainService _domainService;
         private readonly BankingDbContext _dbContext;
 
         public TransferCommandHandler(IAccountRepository repository, BankingDbContext dbContext)
@@ -419,6 +452,10 @@ namespace BankingApi.Application
                     var toAccount = await _repository.GetAccountAsync(request.ToAccountId);
                     if (toAccount == null)
                         throw new AccountNotFoundException(request.ToAccountId);
+
+                     // --- Domain Service: Daily Limit Validation ---
+                    var totalTransfersToday = await _repository.GetTotalTransfersTodayAsync(request.FromAccountId);
+                    _domainService.ValidateDailyLimit(totalTransfersToday, request.Amount);
 
                     // Apply domain rules
                     fromAccount.Withdraw(request.Amount);
