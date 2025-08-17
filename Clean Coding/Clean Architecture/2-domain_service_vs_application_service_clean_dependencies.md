@@ -4,8 +4,6 @@
 
 ---
 
-## TL;DR
-
 - **Domain Service = pure business rules** (stateless, deterministic, no I/O).
 - **Application Service = orchestration** (fetch data via repositories, manage transactions, call domain).
 - Keep the **Domain layer independent** of data access; pass *data-in* and get *decisions-out*.
