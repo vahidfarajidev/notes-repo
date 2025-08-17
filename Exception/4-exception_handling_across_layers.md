@@ -74,10 +74,6 @@ Exactly, according to **DDD and layered architecture principles**, putting a `tr
 
 # Application Layer Exception Handling & Logging Behavior
 
-Here’s a step-by-step explanation for two common questions regarding exception handling in the Application layer of a DDD-based system.
-
----
-
 ### 1️⃣ Is it correct **not to put try/catch in the Application layer**?
 
 ✔ **Yes, in this scenario it is correct**, because:
