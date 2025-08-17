@@ -509,9 +509,6 @@ namespace BankingApi.Application
                     throw new TransferFailedException("Transfer failed after multiple retries.", ex);
                 }
             }
-
-            // If all retries fail, throw exception
-            throw new DbUpdateException("Failed to save transaction after retries.", (Exception?)null);
         }
     }
 }
