@@ -142,6 +142,8 @@ namespace BankingApi.Domain
 - System-related errors (DB, Network, API) bubble up to the **Application Layer**, which decides how to handle them (retry, fallback, user message).
 - Domain-related errors belong in the **Domain Layer**.
 
+Consider the following code sample:
+
 ```csharp
 public async Task<Account> GetAccountAsync(string id)
 {
@@ -152,68 +154,24 @@ public async Task<Account> GetAccountAsync(string id)
 }
 ```
 
-Consider the following code sample:
-// 📌 Is this correct?
+📌 Is this correct?
 
-// From a technical perspective, it works fine.
+From a technical perspective, it works fine.
 
-// However, from a DDD and layering perspective, there are a few points:
+However, from a DDD and layering perspective, there are a few points:
 
-// Exception type
-// KeyNotFoundException is considered a system/infrastructure exception (not a domain exception).
-// These kinds of exceptions are more suitable for infrastructure or .NET collections, 
-// rather than expressing domain concepts like "Account not found".
+Exception type
+KeyNotFoundException is considered a system/infrastructure exception (not a domain exception).
+These kinds of exceptions are more suitable for infrastructure or .NET collections, 
+rather than expressing domain concepts like "Account not found".
 
-// Proper place to indicate "Account does not exist"
-// It is better if the repository simply returns the data (even null).
-// Then, in the Application Layer or Domain Service, you decide if it should throw, 
-// for example, an AccountNotFoundException when null.
+Proper place to indicate "Account does not exist"
+It is better if the repository simply returns the data (even null).
+Then, in the Application Layer or Domain Service, you decide if it should throw, 
+for example, an AccountNotFoundException when null.
 
-// Better alternatives
-// You can create a custom domain exception like:
-
-public class AccountNotFoundException : DomainException
-{
-    public AccountNotFoundException(string accountId) 
-        : base($"Account with id {accountId} not found.") {}
-}
-
-// Or even better, instead of throwing an exception, you can use the Result Pattern or Option/Maybe:
-
-public async Task<Account?> GetAccountAsync(string id)
-{
-    return await _dbContext.Accounts.FindAsync(id);
-}
-
-// Then higher up (for example, in the Application Layer) you decide how to handle null.
-
-```csharp
-public async Task<Account> GetAccountAsync(string id)
-{
-    var account = await _dbContext.Accounts.FindAsync(id);
-    if (account == null)
-        throw new KeyNotFoundException($"Account {id} not found.");
-    return account;
-}
-
-// 📌 Is this correct?
-
-// From a technical perspective, it works fine.
-
-// However, from a DDD and layering perspective, there are a few points:
-
-// Exception type
-// KeyNotFoundException is considered a system/infrastructure exception (not a domain exception).
-// These kinds of exceptions are more suitable for infrastructure or .NET collections, 
-// rather than expressing domain concepts like "Account not found".
-
-// Proper place to indicate "Account does not exist"
-// It is better if the repository simply returns the data (even null).
-// Then, in the Application Layer or Domain Service, you decide if it should throw, 
-// for example, an AccountNotFoundException when null.
-
-// Better alternatives
-// You can create a custom domain exception like:
+Better alternatives
+You can create a custom domain exception like:
 
 public class AccountNotFoundException : DomainException
 {
@@ -221,14 +179,14 @@ public class AccountNotFoundException : DomainException
         : base($"Account with id {accountId} not found.") {}
 }
 
-// Or even better, instead of throwing an exception, you can use the Result Pattern or Option/Maybe:
+Or even better, instead of throwing an exception, you can use the Result Pattern or Option/Maybe:
 
 public async Task<Account?> GetAccountAsync(string id)
 {
     return await _dbContext.Accounts.FindAsync(id);
 }
 
-// Then higher up (for example, in the Application Layer) you decide how to handle null.
+Then higher up (for example, in the Application Layer) you decide how to handle null.
 
 
 ```csharp
