@@ -190,6 +190,45 @@ public async Task<Account?> GetAccountAsync(string id)
 ```
 Then higher up (for example, in the Application Layer) you decide how to handle null.
 
+According to **DDD and layered architecture** principles, the first version is **more correct and standard**:
+
+```csharp
+public async Task<Account?> GetAccountAsync(string id)
+{
+    return await _dbContext.Accounts.FindAsync(id);
+}
+```
+
+### Why?
+
+1. **Repository is only responsible for data access**
+
+   - It should not decide what it means if the data is missing or which exception to throw.
+   - If the Repository itself throws `AccountNotFoundException`, it places part of the **domain rules** into the Infrastructure layer, which goes against DDD principles.
+
+2. **Domain/Application Layer is responsible for domain logic and errors**
+
+   - In the Application Layer or Domain Service, you can check if the result is `null` and, if needed, throw a domain exception or define specific behavior.
+   - Example:
+
+```csharp
+var account = await _accountRepository.GetAccountAsync(id);
+if (account == null)
+{
+    throw new AccountNotFoundException(id); // Domain decides here
+}
+```
+
+3. **More flexibility**
+   - Later, if you want to use a Result/Option pattern or handle nullable data differently, the first version is easier to adapt.
+
+### Summary
+
+- Repository → only data (`Account?`)
+- Application/Domain → rules, validation, exceptions
+
+
+
 ```csharp
 using BankingApi.Domain;
 using Microsoft.EntityFrameworkCore;
