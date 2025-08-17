@@ -51,15 +51,14 @@ DDD advocates that the Domain should be **free of infrastructure dependencies**:
 **Application / Infrastructure layers** are responsible for interacting with the system and mapping infrastructure errors to appropriate behaviors.
 
 ```csharp
+// -------------------------------
+// DOMAIN LAYER
+// -------------------------------
 namespace BankingApi.Domain
 {
     // -------------------------------
     // Base Domain Exception
     // -------------------------------
-    /// <summary>
-    /// Base class for all domain-related exceptions.
-    /// Domain exceptions represent violations of business rules.
-    /// </summary>
     public abstract class DomainException : Exception
     {
         protected DomainException(string message) : base(message) { }
@@ -92,13 +91,15 @@ namespace BankingApi.Domain
             : base("Target account cannot be null.") { }
     }
 
+    public class AccountNotFoundException : DomainException
+    {
+        public AccountNotFoundException(string accountId)
+            : base($"Account with ID '{accountId}' was not found.") { }
+    }
+
     // -------------------------------
     // Account Aggregate
     // -------------------------------
-    /// <summary>
-    /// Represents a bank account and enforces domain rules for withdrawals and deposits.
-    /// Domain enforces all input validation and business logic.
-    /// </summary>
     public class Account
     {
         public string Id { get; private set; }
@@ -148,10 +149,6 @@ namespace BankingApi.Domain
     // -------------------------------
     // Transaction Entity
     // -------------------------------
-    /// <summary>
-    /// Represents a money transfer transaction between two accounts.
-    /// All domain validation should occur before creating a transaction instance.
-    /// </summary>
     public class Transaction
     {
         public Guid Id { get; private set; }
@@ -298,6 +295,9 @@ if (account == null)
 
 
 ```csharp
+// -------------------------------
+// REPOSITORY LAYER
+// -------------------------------
 using BankingApi.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -321,13 +321,13 @@ namespace BankingApi.Infrastructure
 
         public async Task<Account?> GetAccountAsync(string id)
         {
-	    // Returns only the data; does not throw any domain exceptions.
+            // Only returns data; does not throw domain exceptions
             return await _dbContext.Accounts.FindAsync(id);
         }
 
         public async Task UpdateBalanceAsync(Account account)
         {
-            // EF automatically tracks changes to the entity.
+            // EF tracks changes automatically
             _dbContext.Update(account);
             await _dbContext.SaveChangesAsync();
         }
@@ -344,6 +344,9 @@ namespace BankingApi.Infrastructure
 ## Service Layer (CQRS Command Handler)
 
 ```csharp
+// -------------------------------
+// APPLICATION / SERVICE LAYER
+// -------------------------------
 using BankingApi.Domain;
 using BankingApi.Infrastructure;
 using MediatR;
@@ -369,49 +372,53 @@ namespace BankingApi.Application
             _dbContext = dbContext;
         }
 
-        /// <summary>
-        /// Performs a money transfer between two accounts in an atomic and reliable manner.
-        /// Key points:
-        /// 1. Transactional consistency with BeginTransaction.
-        /// 2. Domain rules enforced by Account entities.
-        /// 3. Retry for transient DbUpdateException including all SaveChangesAsync operations.
-        /// 4. Logging delegated to pipeline/middleware.
-        /// </summary>
         public async Task<Unit> Handle(TransferCommand request, CancellationToken cancellationToken)
         {
+            if (request.Amount <= 0)
+                throw new InvalidAmountException(request.Amount);
+
             int retries = 3;
+
             for (int attempt = 1; attempt <= retries; attempt++)
             {
                 try
                 {
+                    // Begin database transaction
                     await using var transactionScope = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
-					var fromAccount = await _repository.GetAccountAsync(request.FromAccountId);
-					if (fromAccount == null)
-					    throw new AccountNotFoundException(request.FromAccountId);
-					
-					var toAccount = await _repository.GetAccountAsync(request.ToAccountId);
-					if (toAccount == null)
-					    throw new AccountNotFoundException(request.ToAccountId);
+                    // Load accounts
+                    var fromAccount = await _repository.GetAccountAsync(request.FromAccountId);
+                    if (fromAccount == null)
+                        throw new AccountNotFoundException(request.FromAccountId);
 
+                    var toAccount = await _repository.GetAccountAsync(request.ToAccountId);
+                    if (toAccount == null)
+                        throw new AccountNotFoundException(request.ToAccountId);
+
+                    // Apply domain rules
                     fromAccount.Withdraw(request.Amount);
                     toAccount.Deposit(request.Amount);
 
+                    // Persist changes in repository
                     await _repository.UpdateBalanceAsync(fromAccount);
                     await _repository.UpdateBalanceAsync(toAccount);
 
-                    var transaction = new Transaction(request.FromAccountId, request.ToAccountId, request.Amount);
+                    // Create transaction using domain factory method
+                    var transaction = Transaction.Create(request.FromAccountId, request.ToAccountId, request.Amount);
                     await _repository.SaveTransactionAsync(transaction);
 
+                    // Commit transaction
                     await transactionScope.CommitAsync(cancellationToken);
                     return Unit.Value;
                 }
                 catch (DbUpdateException) when (attempt < retries)
                 {
-                    await Task.Delay(500, cancellationToken); // simple backoff
+                    // Retry with simple backoff
+                    await Task.Delay(500 * attempt, cancellationToken);
                 }
             }
 
+            // If all retries fail, throw exception
             throw new DbUpdateException("Failed to save transaction after retries.", (Exception?)null);
         }
     }
