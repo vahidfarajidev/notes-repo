@@ -190,7 +190,7 @@ public async Task<Account?> GetAccountAsync(string id)
 ```
 Then higher up (for example, in the Application Layer) you decide how to handle null.
 
-According to **DDD and layered architecture** principles, the first version is **more correct and standard**:
+According to **DDD and layered architecture** principles, the version below is **more correct and standard**:
 
 ```csharp
 public async Task<Account?> GetAccountAsync(string id)
