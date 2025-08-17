@@ -57,3 +57,124 @@ Examples:
 - **Domain Layer:** Protect invariants, ensure internal model correctness, guard against unwanted input.
 
 **Conclusion:** These two layers are **complementary, not redundant**.
+
+# ✅ Summary of Validation and Exceptions in Service and Domain Layers
+
+---
+
+## 1️⃣ Core Principles
+
+* **Service Layer**: Performs **fail-fast validation** on external inputs (e.g., user form strings) to provide immediate feedback.  
+* **Domain Layer**: Responsible for **enforcing invariants and business rules**; it cannot trust data from the Service.
+
+---
+
+## 2️⃣ Example: Amount (Account Balance)
+
+| Layer   | What is Checked                                | Exception Type                                                        |
+| ------- | --------------------------------------------- | --------------------------------------------------------------------- |
+| Service | Optional initial negative check (fail-fast)    | `ApplicationException` or custom Service exception                    |
+| Domain  | Non-negative, sufficient balance, business rules | `DomainException` (`InvalidAmountException`, `InsufficientFundsException`) |
+
+**Note:** Domain always checks invariants even if the Service already validated the input.
+
+---
+
+## 3️⃣ Example: BirthDate
+
+| Layer   | What is Checked                                      | Exception Type                                          |
+| ------- | -------------------------------------------------- | ------------------------------------------------------ |
+| Service | Correct string format (`string` → `DateTime`)       | `ApplicationException` or custom Service exception    |
+| Domain  | Future date or too old (Invariant check)           | `DomainException` (`BirthDateOutOfRangeException`)    |
+
+**Note:** Domain works only with validated `DateTime` values; parsing is handled by the Service.
+
+---
+
+## 4️⃣ Key Points
+
+1. **Dual validation ≠ duplication**
+   * Service: Provides fast feedback and saves resources.  
+   * Domain: Ensures integrity and business rules.
+
+2. **Value Objects for Standardization**
+   * Shared ValueObjects (e.g., `BirthDate` or `Amount`) enforce domain invariants.  
+   * Service can use the same ValueObject, but parsing and fail-fast validation happen before creation.
+
+3. **Separate Exceptions**
+   * Domain should never throw `ApplicationException` or Service-layer exceptions.  
+   * Service may throw `ApplicationException` or custom exceptions for invalid external inputs.
+
+---
+
+## 5️⃣ Exception Flow
+
+```text
+[User Input (string)]
+      |
+      v
+[Service Layer: fail-fast parsing & basic checks]
+      |
+      v
+[ValueObject / Domain Layer: invariant checks & business rules]
+      |
+      v
+[DomainException thrown if invariant violated]
+      |
+      v
+[MediatR Pipeline / Logging Behavior]
+      |
+      v
+[HTTP Middleware: build user response]
+```
+
+---
+
+## 6️⃣ Example Code
+
+### Service Layer (Fail-Fast)
+
+```csharp
+string input = "2000-02-31"; // user input
+if (!DateTime.TryParse(input, out var date))
+    throw new ApplicationException("Invalid birth date format.");
+
+var birthDate = new BirthDate(date); // validated data passed to Domain
+```
+
+### Domain Layer (Invariant Protection)
+
+```csharp
+public class BirthDate
+{
+    public DateTime Value { get; }
+
+    public BirthDate(DateTime date)
+    {
+        if (date > DateTime.UtcNow || date.Year < 1900)
+            throw new DomainException("Birth date is out of allowed range.");
+
+        Value = date;
+    }
+}
+```
+
+### Domain Example: Amount
+
+```csharp
+public class Account
+{
+    public decimal Balance { get; private set; }
+
+    public void Withdraw(decimal amount)
+    {
+        if (amount <= 0)
+            throw new InvalidAmountException(amount);
+
+        if (Balance < amount)
+            throw new InsufficientFundsException("AccountId", Balance, amount);
+
+        Balance -= amount;
+    }
+}
+```
