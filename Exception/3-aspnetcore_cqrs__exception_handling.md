@@ -508,6 +508,15 @@ namespace BankingApi.Application
                 catch (DbUpdateException ex) when (attempt == retries)
                 {
                     throw new TransferFailedException("Transfer failed after multiple retries.", ex);
+                    <!-- 
+                    You are essentially creating an Application-layer Exception with a specific message and keeping the original Exception (DbUpdateException)
+                     as the InnerException. This has several advantages:                      
+                    - The UI or higher layer only deals with the user-friendly message and can display something like "Transaction failed" to the end user.  
+                    - The full error details are still preserved; if needed, the Middleware or Logging pipeline can access the InnerException and log EF or
+                      database-specific details.  
+                    - **Encapsulation**: The Application layer shields the Domain or Infrastructure layers from direct exposure to the UI, while still preserving
+                     the necessary information for debugging.  
+                    -->
                 }
             }
         }
