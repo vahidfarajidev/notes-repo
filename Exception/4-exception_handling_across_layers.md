@@ -134,10 +134,6 @@ Exactly, according to **DDD and layered architecture principles**, putting a `tr
 
 ---
 
-If desired, a **diagram showing the exception flow from Repository → Application Handler → Logging Behavior → Middleware → UI** can be provided to make the process fully transparent.
-
----
-
 ## 4️⃣ Controller / Middleware (UI Layer)
 
 **Purpose:** Receive requests, call the Service, and return responses to the client.
