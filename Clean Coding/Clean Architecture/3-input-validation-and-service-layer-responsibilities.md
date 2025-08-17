@@ -58,9 +58,7 @@ Examples:
 
 **Conclusion:** These two layers are **complementary, not redundant**.
 
-# ✅ Summary of Validation and Exceptions in Service and Domain Layers
-
----
+# ✅ Review and Analysis of Validation and Exceptions in Service and Domain Layers with Example:
 
 ## 1️⃣ Core Principles
 
