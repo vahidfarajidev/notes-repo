@@ -31,6 +31,36 @@
 
 **Behavior:** Repository typically does **not catch SystemExceptions**; they are allowed to **bubble up** to higher layers.
 
+Exactly, according to **DDD and layered architecture principles**, putting a `try-catch` and directly throwing `SqlException` inside the Repository is generally **not recommended**. 😅
+
+### Reasons:
+
+1️⃣ **Repository = Data Access Only**
+
+- The Repository's responsibility is solely to read/write data.
+- It should not decide how errors are handled or throw domain-specific exceptions.
+- Catching and wrapping a `SqlException` inside the Repository would introduce part of error handling logic into the Infrastructure layer, which is not correct from a DDD perspective.
+
+2️⃣ **System Exceptions = Handled by Application Layer**
+
+- Infrastructure-related exceptions like:
+  - `SqlException`
+  - `TimeoutException`
+  - `DbUpdateException`
+- Should be allowed to **bubble up to the Application Layer**, which can then decide whether to retry, fallback, or show an appropriate user message.
+
+3️⃣ **Exceptions in Repository Only in Special Cases**
+
+- Only in cases where you really want to wrap or log the exception, you can use `try-catch`, but:
+  - The original exception should still bubble up.
+  - The Repository should **not embed domain logic or throw custom domain exceptions**.
+
+💡 **Summary:**
+
+- No, the Repository should **not throw `SqlException` itself**.
+- Let the system exceptions bubble up naturally, and let the **Application/Domain Layer** decide how to handle them.
+
+
 ---
 
 ## 3️⃣ Service Layer
