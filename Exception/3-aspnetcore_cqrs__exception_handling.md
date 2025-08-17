@@ -150,7 +150,9 @@ public async Task<Account> GetAccountAsync(string id)
         throw new KeyNotFoundException($"Account {id} not found.");
     return account;
 }
+```
 
+Consider the following code sample:
 // 📌 Is this correct?
 
 // From a technical perspective, it works fine.
