@@ -712,6 +712,113 @@ namespace BankingApi.Api.Middleware
     }
 }
 ```
+---
+Vesion 2
+```csharp
+using System.Net;
+using System.Text.Json;
+using BankingApi.Domain;
+using BankingApi.Application; 
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+namespace BankingApi.Api.Middleware
+{
+    public class ExceptionHandlingMiddleware
+    {
+        private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+        {
+            _next = next;
+            _logger = logger;
+        }
+
+        public async Task InvokeAsync(HttpContext context)
+        {
+            try
+            {
+                await _next(context);
+            }
+            // -------------------------------
+            // Resource not found (DomainException specific)
+            // -------------------------------
+            catch (AccountNotFoundException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Account not found. Request {Method} {Path}, Id={AccountId}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    ex.AccountId);
+
+                await WriteErrorResponseAsync(context, HttpStatusCode.NotFound,
+                    "The requested account was not found.");
+            }
+            // -------------------------------
+            // Domain rule violations (Bad Request or Unprocessable Entity)
+            // -------------------------------
+            catch (DomainException ex)
+            {
+                _logger.LogWarning(ex,
+                    "Domain rule violation. Request {Method} {Path}, Message={Message}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    ex.Message);
+
+                var status = ex is InsufficientFundsException
+                    ? HttpStatusCode.UnprocessableEntity // 422
+                    : HttpStatusCode.BadRequest;          // 400
+
+                await WriteErrorResponseAsync(context, status,
+                    "Business rule violation. Please check your request and try again.");
+            }
+            // -------------------------------
+            // Application-layer failures (orchestration/use case errors)
+            // -------------------------------
+            catch (ApplicationServiceException ex)
+            {
+                _logger.LogError(ex,
+                    "Application service failure. Request {Method} {Path}, Message={Message}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    ex.Message);
+
+                await WriteErrorResponseAsync(context, HttpStatusCode.InternalServerError,
+                    "The operation could not be completed. Please try again later.");
+            }
+            // -------------------------------
+            // Unexpected exceptions
+            // -------------------------------
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Unhandled exception. Request {Method} {Path}",
+                    context.Request.Method,
+                    context.Request.Path);
+
+                await WriteErrorResponseAsync(context, HttpStatusCode.InternalServerError,
+                    "An unexpected error occurred. Please try again later.");
+            }
+        }
+
+        private static async Task WriteErrorResponseAsync(HttpContext context, HttpStatusCode statusCode, string userMessage)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)statusCode;
+
+            var errorResponse = new
+            {
+                error = userMessage,
+                status = context.Response.StatusCode
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+        }
+    }
+}
+```
+---
 
 Summary
 
