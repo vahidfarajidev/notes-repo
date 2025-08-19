@@ -1,11 +1,5 @@
 # Understanding CancellationToken in .NET
 
-**Author:** Your Name  
-**Date:** 2025-08-19  
-**Tags:** .NET, C#, Async, Cancellation, Task
-
----
-
 ## Introduction
 
 In modern .NET applications, especially those performing **long-running or asynchronous tasks**, it is often necessary to allow **tasks to be canceled gracefully**. This is where `CancellationToken` comes into play.
