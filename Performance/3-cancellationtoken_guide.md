@@ -90,23 +90,44 @@ public async Task<IActionResult> GetData(CancellationToken token)
 
 ## When to Check the Token Directly
 
-Direct checking of the token is necessary when:
+Sometimes a method has a **long-running loop** or performs work that **internal APIs do not accept a CancellationToken**. In such cases, checking the token inside the loop is necessary. 
 
-- The method has a **long-running loop**.  
-- Internal API calls **do not accept a CancellationToken**.  
-
-Example:
+### Example: Without Checking Token (Cancellation Fails)
 
 ```csharp
 public async Task ProcessDataAsync(CancellationToken token)
 {
     while (true)
     {
-        token.ThrowIfCancellationRequested();
-        await Task.Delay(1000); // Simulate work
+        // No token check here
+        await Task.Delay(1000); // Simulate long work
+        Console.WriteLine("Working...");
     }
 }
 ```
+
+**Explanation:**
+- Even if the caller cancels the token, the loop continues.  
+- Task does not respond to the cancellation request because the token is never checked.
+
+### Example: Correct Way (Cancellation Works)
+
+```csharp
+public async Task ProcessDataAsync(CancellationToken token)
+{
+    while (true)
+    {
+        token.ThrowIfCancellationRequested(); // Check token
+
+        await Task.Delay(1000); // Simulate long work
+        Console.WriteLine("Working...");
+    }
+}
+```
+
+**Explanation:**
+- Token is checked inside the loop.  
+- When the caller cancels, `ThrowIfCancellationRequested()` throws `OperationCanceledException`, and the task exits gracefully.
 
 ---
 
