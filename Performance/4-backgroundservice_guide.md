@@ -1,6 +1,6 @@
 # Understanding `IHostedService`, `BackgroundService`, and Scoped Services in ASP.NET Core
 
-Background services in **ASP.NET Core** are a powerful way to run tasks outside of the HTTP request pipeline. In this guide, we'll go step by step through the concepts of `IHostedService`, `BackgroundService`, scoped services, and best practices.
+Background services in **ASP.NET Core** are a powerful way to run tasks outside of the HTTP request pipeline. In this guide, we'll go step by step through the concepts of `IHostedService`, `BackgroundService`, scoped services, and best practices. At the end, you’ll find a **complete runnable sample project**.
 
 ---
 
@@ -244,6 +244,86 @@ public class MessageWorker : BackgroundService
 ```
 
 Every loop creates a new scope → like a new HTTP request.
+
+---
+
+## ✅ Full Sample Project Structure
+
+Here’s a minimal runnable example you can put in GitHub.
+
+### Program.cs
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Register services
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddHostedService<MessageWorker>();
+
+var app = builder.Build();
+
+app.MapGet("/", () => "Hello World!");
+
+app.Run();
+```
+
+### IMessageService.cs
+
+```csharp
+public interface IMessageService
+{
+    void SendMessage(string message);
+}
+```
+
+### MessageService.cs
+
+```csharp
+public class MessageService : IMessageService
+{
+    private readonly ILogger<MessageService> _logger;
+
+    public MessageService(ILogger<MessageService> logger)
+    {
+        _logger = logger;
+    }
+
+    public void SendMessage(string message)
+    {
+        _logger.LogInformation("[MessageService] {Message}", message);
+    }
+}
+```
+
+### MessageWorker.cs
+
+```csharp
+public class MessageWorker : BackgroundService
+{
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<MessageWorker> _logger;
+
+    public MessageWorker(IServiceScopeFactory scopeFactory, ILogger<MessageWorker> logger)
+    {
+        _scopeFactory = scopeFactory;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<IMessageService>();
+                service.SendMessage("Hello from BackgroundService!");
+            }
+
+            await Task.Delay(2000, stoppingToken);
+        }
+    }
+}
+```
 
 ---
 
