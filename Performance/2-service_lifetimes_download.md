@@ -1,6 +1,6 @@
 # Service Lifetimes in ASP.NET Core
 
-This Markdown document explains **Singleton**, **Scoped**, and **Transient** service lifetimes in ASP.NET Core using a Q&A format with code examples.
+This document explains **Singleton**, **Scoped**, and **Transient** service lifetimes in ASP.NET Core using a Q&A format with code examples.
 
 ---
 
