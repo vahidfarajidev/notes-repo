@@ -259,5 +259,3 @@ Every loop creates a new scope → like a new HTTP request.
 
 ---
 
-Would you like to see a **full sample project structure** (Program.cs + Worker + Scoped Service) as a ready-to-run demo for GitHub?
-
