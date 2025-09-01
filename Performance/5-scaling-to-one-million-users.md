@@ -252,5 +252,3 @@ At ~1M users, **~40% of traffic** was static assets. We moved these to **Cloudfl
 > Take **caching**, **async processing**, **sharding/replication**, and **observability** seriously from day zero, and each step to the next order of magnitude gets a lot less painful.
 
 ---
-
-*If this post is useful, feel free to reuse with attribution.*  
