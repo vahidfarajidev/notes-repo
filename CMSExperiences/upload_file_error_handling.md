@@ -1,24 +1,24 @@
 # Handling File Upload Validation and Detailed Errors in ASP.NET 4.8
 
-In older ASP.NET applications, it is common to return `500 Internal Server Error` for all file upload issues. This is not ideal because users cannot understand the reason for failure, and it mixes different error scenarios under a single status code.
+A common but flawed approach in older ASP.NET applications is to return `500 Internal Server Error` for all file upload issues. This is not recommended because it mixes different error scenarios under a single status code and does not inform the user about the specific problem.
 
-## The Old Approach (Problematic)
+## Why Returning 500 for All Errors is a Wrong Approach
 
-Previously, all errors during file upload, such as invalid file types, oversized files, or duplicates, returned `500`.
+Previously, developers often did something like this:
 
 ```csharp
 context.Response.StatusCode = 500;
 context.Response.Write("File is invalid or duplicate");
 ```
 
-This approach is not recommended because:
-- `500` indicates a server problem, not a client-side validation error.
+This approach is problematic because:
+- `500` indicates a server-side failure, but most file upload issues are client-side validation errors.
 - Users cannot distinguish between duplicate files, invalid files, or other errors.
+- It does not follow HTTP best practices for meaningful status codes.
 
 ## Updated Approach with Proper Error Codes
 
-We updated the code to use specific HTTP status codes and detailed messages:
-
+Instead of returning `500`, we now use:
 - **400 Bad Request**: For invalid file types or failed validation.
 - **409 Conflict**: For duplicate files.
 
@@ -60,7 +60,7 @@ catch (Infrastructure.Exception.CMSException ex)
 
 ## IIS Configuration Update
 
-To make sure IIS does not override our custom error messages, we updated the `web.config`:
+To ensure IIS does not override these custom error messages, we update `web.config`:
 
 ```xml
 <system.webServer>
@@ -68,12 +68,12 @@ To make sure IIS does not override our custom error messages, we updated the `we
 </system.webServer>
 ```
 
-This ensures that responses like `"The file is invalid."` or `"The file already exists."` are returned directly to the client, preserving the correct status codes and messages.
+This preserves the correct status codes and error messages sent to the client.
 
 ## Summary
 
-- Returning `500` for all errors is misleading and not user-friendly.
+- Returning `500` for all errors is a flawed approach.
 - Use `400` for validation errors and `409` for duplicates.
-- Update IIS with `existingResponse="PassThrough"` to keep custom messages intact.
+- Configure IIS with `existingResponse="PassThrough"` to maintain custom messages.
 
-This approach provides clear, actionable feedback for clients and aligns with HTTP best practices.
+This method provides clear, actionable feedback for clients and adheres to HTTP best practices.
