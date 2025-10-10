@@ -98,6 +98,5 @@ git push origin main
 
 ---
 
-حالا من منتظر دستور تو هستم:
-وقتی گفتی **«برو بعدی»**، قدم بعدی (تنظیمات بخش CD / Deploy به Azure App Service و Service Connection) رو شروع می‌کنم.
+قدم بعدی (تنظیمات بخش CD / Deploy به Azure App Service و Service Connection)
 
