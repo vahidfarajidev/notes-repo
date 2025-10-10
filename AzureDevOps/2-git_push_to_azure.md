@@ -57,5 +57,3 @@ git push -u origin main --force
 
 ---
 
-*این مقاله مناسب برای قرار دادن در GitHub README یا Documentation پروژه‌های دات‌نت و Azure DevOps است.*
-
