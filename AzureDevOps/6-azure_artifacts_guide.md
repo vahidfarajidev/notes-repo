@@ -108,9 +108,19 @@ Source Code → Build → Artifact (drop) → Deploy → Production
 
 این نشان می‌دهد که Artifact همان بسته‌ی میانی است که از Build به Deployment منتقل می‌شود.
 
+
+| مفهوم | توضیح |
+|--------|--------|
+| Artifact | خروجی نهایی مرحله‌ی Build |
 | محل ذخیره | سرور Azure DevOps |
 | دستور انتشار | `PublishBuildArtifacts@1` |
 | مشاهده | بخش **Artifacts** در صفحه‌ی Pipeline Run |
 | استفاده مجدد | با `download: current` در مراحل بعدی |
 | مزیت | جداسازی Build و Deploy، پایداری و تکرارپذیری فرایندها |
 
+---
+
+### 📘 منابع پیشنهادی
+- [Microsoft Docs – Publish and Download Artifacts](https://learn.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts)
+- [YAML Schema Reference](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema)
+- [Azure Pipelines Agents and Pools](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/agents)
