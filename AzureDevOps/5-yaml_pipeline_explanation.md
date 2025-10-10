@@ -22,7 +22,7 @@ trigger:
       - main
 ```
 - مشخص می‌کند Pipeline **چه زمانی اجرا شود**.
-- در این مثال، هر `push` یا `merge` به شاخه `main` Pipeline را فعال می‌کند.
+- در این مثال، هر `push` یا `merge` به شاخه `main` Pipeline را فعال می‌کند. یعنی هر بار که در شاخه main تغییری Push کنی (کد جدید، تغییر فایل، حتی Commit خالی)، Azure DevOps به صورت خودکار Pipeline رو Run می‌کنه. نیازی نیست هیچ دکمه‌ای بزنی.
 
 ### 2.2 Pool
 ```yaml
