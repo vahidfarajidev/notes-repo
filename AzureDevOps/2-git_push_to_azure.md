@@ -8,8 +8,8 @@
 
 ### **۱. ساخت پروژه و ریپوزیتوری در Azure DevOps**
 - وارد [Azure DevOps](https://dev.azure.com/) شو
-- یک پروژه جدید بساز، به عنوان مثال: `AzureDemoProject`
-- داخل پروژه، یک ریپوزیتوری بساز، به عنوان مثال: `AzureDemoApi`
+- یک پروژه جدید بساز، به عنوان مثال: `<PROJECT_NAME>`
+- داخل پروژه، یک ریپوزیتوری بساز، به عنوان مثال: `<REPO_NAME>`
 
 ---
 
@@ -28,7 +28,7 @@ git branch -M main
 ### **۳. اضافه کردن Remote به Azure DevOps**
 - URL ریپو را از صفحه Azure DevOps کپی کن و دستور زیر را اجرا کن:
 ```powershell
-git remote add origin https://dev.azure.com/vahidfaraji/AzureDemoProject/_git/AzureDemoApi
+git remote add origin https://dev.azure.com/<ORG_NAME>/<PROJECT_NAME>/_git/<REPO_NAME>
 ```
 - اگر قبلاً Remote اضافه شده، ابتدا آن را حذف کن:
 ```powershell
