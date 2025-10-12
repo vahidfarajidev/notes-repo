@@ -40,5 +40,5 @@ https://azuredemoapi-vahidfaraji.azurewebsites.net/api/hello
 
 ---
 
-**«قدم بعدی»**: **اضافه کردن مانیتورینگ و Application Insights** برای مشاهده لاگ‌ها و سلامت اپلیکیشن.
+**قدم بعدی**: **اضافه کردن مانیتورینگ و Application Insights** برای مشاهده لاگ‌ها و سلامت اپلیکیشن.
 
