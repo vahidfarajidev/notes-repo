@@ -49,5 +49,8 @@ https://<AppServiceName>.azurewebsites.net
 
 ---
 
+الان App Service آماده‌ست، فقط باید Pipeline (از Azure DevOps) رو بهش متصل کنیم تا هر بار که Build موفق انجام میشه، خروجی به‌صورت خودکار روی همین App Service Deploy بشه.
+---
+
 ## 🔜 مرحله بعد
 تنظیم **Continuous Deployment (CD)** برای ارسال اتوماتیک Buildها از Azure DevOps به App Service.
