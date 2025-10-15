@@ -26,15 +26,19 @@
 
 ```bash
 # متغیرها — اینها رو طبق نیازت تغییر بده
-RESOURCE_GROUP="AzureDemo-RG"
-ACR_NAME="azuredemoacr$(date +%s | tail -c 4)"  # مثال: azuredemoacr1234 (اسم باید یکتا و با حروف کوچک باشد)
-LOCATION="westeurope"
+
+# متغیرها
+$RESOURCE_GROUP = "AzureDemo-RG"
+$ACR_NAME = "azuredemoacr" + (Get-Random -Maximum 9999)  # اسم یکتا و کوچک
+$LOCATION = "westeurope"
+
 
 # ساخت Resource Group (اگر قبلاً ساخته شده نگهش دار)
 az group create --name $RESOURCE_GROUP --location $LOCATION
 
 # ساخت ACR (Basic یا Standard)
 az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Standard --location $LOCATION
+
 ```
 
 📘 و `az acr create` خروجی‌ای می‌دهد که نام ACR را تأیید می‌کند.
