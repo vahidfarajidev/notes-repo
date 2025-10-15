@@ -67,7 +67,6 @@ Pipeline در Azure DevOps معمولاً به دو بخش تقسیم می‌ش�
 -  می‌تونی یک کامیت خالی (empty commit) انجام بدی تا فقط Triggerها و تغییرات فایل YAML رو تست کنی بدون اینکه کد دیگری تغییر کنه:
 
 ```bash
-# کامیت خالی در Git
 git commit --allow-empty -m "Test pipeline trigger after disabling triggers"
 git push origin main
 ```
