@@ -43,6 +43,7 @@ variables:
 
 * اگر تگ ثابت باشد → همیشه overwrite می‌شود
 * اگر تگ پویا باشد → نسخه‌های مختلف حفظ می‌شوند و rollback راحت‌تر است
+* 
   ---
 
 ## مدیریت Docker Image ها در ACR و Azure App Service Free
