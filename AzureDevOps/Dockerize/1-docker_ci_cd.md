@@ -79,11 +79,13 @@ docker run -d -p 8080:80 --name azuredemoapi azuredemoapi:latest
 * `azuredemoapi:latest` → نام و تگ Image که قبلاً ساخته شده است
 
 ### نکات مهم:
-- برای متوقف کردن کانتینر:  
-  ```bash
+- برای متوقف کردن کانتینر:
+    
+
+```bash
 docker stop azuredemoapi
 docker rm azuredemoapi
-  ```
+```
 
 
 * Container روی پورت 8080 سیستم تو در پس زمینه اجرا می‌شود
