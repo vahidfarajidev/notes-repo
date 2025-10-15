@@ -112,7 +112,6 @@ az acr repository show-tags --name $ACR_NAME --repository azuredemoapi --output 
 
 ---
 
-✅ اگر آماده‌ای برای مرحله‌ی بعد (تنظیم Pipeline برای Build و Push خودکار)، فقط بگو:
+✅ مرحله‌ی بعد: (تنظیم Pipeline برای Build و Push خودکار)
 
-> **برو قدم بعدی**
 
