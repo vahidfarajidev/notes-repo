@@ -109,10 +109,20 @@ steps:
 ### گام ۲ — Push و اجرای Pipeline
 
 1. فایل YAML را به Git اضافه و Commit کن:
+   
+قبل از اجرای Pipeline باید Dockerfile هم توی ریپو باشه، چون Pipeline فایل YAML بهش اشاره می‌کنه (Dockerfile: '**/Dockerfile').
+```powershell
+git add Dockerfile
+git commit -m "Add Dockerfile for AzureDemoApi"
+```
 
+بعد فایل Pipeline YAML رو اضافه و کامیت کن:
 ```powershell
 git add azure-pipelines-docker.yml
 git commit -m "Add Docker build & push pipeline"
+```
+در نهایت Push کن به main:
+```powershell
 git push origin main
 ```
 
