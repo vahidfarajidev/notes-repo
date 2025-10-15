@@ -33,16 +33,20 @@ $ACR_NAME = "azuredemoacr" + (Get-Random -Maximum 9999)  # اسم یکتا و ک
 $LOCATION = "westeurope"
 
 
-# ساخت Resource Group (اگر قبلاً ساخته شده نگهش دار)
+# ساخت Resource Group (اگر قبلاً ساخته شده نگهش دار) یعنی همه منابع پروژه (مثل ACR، VM، Storage) داخل این گروه نگهداری می‌شوند.
 az group create --name $RESOURCE_GROUP --location $LOCATION
 
-# ساخت ACR (Basic یا Standard)
+# ساخت ACR (Basic یا Standard) یعنی یک Registry برای Docker Imageها ایجاد می‌کند.
 az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Standard --location $LOCATION
 
 ```
 
 📘 و `az acr create` خروجی‌ای می‌دهد که نام ACR را تأیید می‌کند.
 نام نهایی ACR را ذخیره کن (مثلاً `azuredemoacr1234`).
+
+همچنین --sku Standard نوع پلن را مشخص می‌کند (Basic کوچکتر، Standard معمول، Premium برای پروژه‌های سنگین).
+
+خروجی JSON شامل اطلاعات Registry مثل loginServer است.
 
 ---
 
