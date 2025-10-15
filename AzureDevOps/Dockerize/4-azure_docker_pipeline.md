@@ -64,6 +64,46 @@ steps:
 
 ---
 
+نسخه‌ی YAML Pipeline با ACR واقعی و tag پویا بر اساس Build ID:
+```yaml
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  dockerRegistryServiceConnection: 'AzureDemo-Connection'  # Service Connection به Azure
+  imageRepository: 'azuredemoapi'
+  containerRegistry: 'azuredemoacr2873' # ACR واقعی
+  tag: '$(Build.BuildId)'  # tag پویا بر اساس Build ID
+
+steps:
+- task: Docker@2
+  displayName: Build Docker Image
+  inputs:
+    command: build
+    Dockerfile: '**/Dockerfile'
+    tags: |
+      $(tag)
+    buildContext: .
+
+- task: Docker@2
+  displayName: Push Docker Image to ACR
+  inputs:
+    command: push
+    repository: $(containerRegistry)/$(imageRepository)
+    tags: |
+      $(tag)
+    azureSubscription: $(dockerRegistryServiceConnection)
+    containerRegistry: $(containerRegistry)
+```
+🔹 توضیحات:
+هر Build یک tag یکتا می‌گیرد ($(Build.BuildId))، پس Image قبلی overwrite نمی‌شود.
+
+---
 ### گام ۲ — Push و اجرای Pipeline
 
 1. فایل YAML را به Git اضافه و Commit کن:
