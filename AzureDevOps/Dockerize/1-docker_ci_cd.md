@@ -69,6 +69,28 @@ docker build -t azuredemoapi:latest .
 docker run -d -p 8080:80 --name azuredemoapi azuredemoapi:latest
 ```
 
+### توضیح سینتکس:
+* `docker run` → ایجاد و اجرای کانتینر از یک Image
+* `-d` → اجرا در **Background / detached mode**
+* `-p 8080:80` → اتصال پورت کانتینر به پورت سیستم Host
+  * سمت چپ (8080) = پورت روی سیستم تو
+  * سمت راست (80) = پورت داخل کانتینر که Dockerfile با `EXPOSE 80` مشخص کرده
+* `--name azuredemoapi` → نام دلخواه برای کانتینر
+* `azuredemoapi:latest` → نام و تگ Image که قبلاً ساخته شده است
+
+### نکات مهم:
+- بعد از اجرای این دستور، کانتینر در پس‌زمینه اجرا می‌شود و می‌توانی با مرورگر یا Postman به:
+  ```text
+  http://localhost:8080/api/hello
+  ```
+  دسترسی داشته باشی.
+- برای متوقف کردن کانتینر:
+  ```powershell
+docker stop azuredemoapi
+docker rm azuredemoapi
+  ```
+
+
 * Container روی پورت 8080 سیستم تو اجرا می‌شود
 * حالا مرورگر یا Postman را باز کن به:
 
