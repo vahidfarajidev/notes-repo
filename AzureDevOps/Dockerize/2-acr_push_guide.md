@@ -70,7 +70,6 @@ az acr login --name <ACR_NAME>
 فرض می‌کنیم image لوکالت اسمش `azuredemoapi:latest` است. حالا آن را تگ کرده و به ACR ارسال می‌کنیم:
 
 ```bash
-# متغیرها
 $LOCAL_IMAGE = "azuredemoapi:latest"
 $ACR_NAME = "<ACR_NAME>"   # جایگزین کن با نام واقعی ACR
 
