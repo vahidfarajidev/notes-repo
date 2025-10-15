@@ -1,3 +1,9 @@
+در yml فایل:
+variables:
+  dockerRegistryServiceConnection: 'AzureDemo-Connection'  # Service Connection به Azure
+  imageRepository: 'azuredemoapi'
+  containerRegistry: '<ACR_NAME>' # نام ACR
+  tag: '1.0.0'
 اگر فقط یک تگ ثابت استفاده کنی مثل `1.0.0` یا حتی `latest` و هر بار Pipeline اجرا شود:
 
 * همان Image در ACR **بازنویسی می‌شود** (overwrite).
