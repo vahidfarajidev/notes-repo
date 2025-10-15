@@ -6,7 +6,7 @@
 
 ## ۱️⃣ بررسی وجود Winget
 
-Winget همان **Windows Package Manager** است که ابزار خط فرمانی برای نصب نرم‌افزارهاست.
+در واقع Winget همان **Windows Package Manager** است که ابزار خط فرمانی برای نصب نرم‌افزارهاست.
 
 در Developer PowerShell یا PowerShell عادی دستور زیر را اجرا کن:
 
