@@ -39,7 +39,7 @@ pr:
 - اگر این بخش خالی باشد، هیچ PR باعث اجرای Pipeline نخواهد شد.
 
 ---
-# ارتباط CI و CD در Azure DevOps
+## ارتباط CI و CD در Azure DevOps
 
 Pipeline در Azure DevOps معمولاً به دو بخش تقسیم می‌شود:
 
