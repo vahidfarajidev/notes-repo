@@ -70,15 +70,18 @@ az acr login --name <ACR_NAME>
 فرض می‌کنیم image لوکالت اسمش `azuredemoapi:latest` است. حالا آن را تگ کرده و به ACR ارسال می‌کنیم:
 
 ```bash
-LOCAL_IMAGE="azuredemoapi:latest"
-ACR_NAME="<ACR_NAME>"                    # جایگزین کن
-ACR_LOGIN_SERVER="$(az acr show --name $ACR_NAME --query loginServer --output tsv)"
+# متغیرها
+$LOCAL_IMAGE = "azuredemoapi:latest"
+$ACR_NAME = "<ACR_NAME>"   # جایگزین کن با نام واقعی ACR
 
-# تگ کردن
-docker tag $LOCAL_IMAGE $ACR_LOGIN_SERVER/azuredemoapi:1.0.0
+# گرفتن login server از ACR
+$ACR_LOGIN_SERVER = az acr show --name $ACR_NAME --query loginServer --output tsv
 
-# Push
-docker push $ACR_LOGIN_SERVER/azuredemoapi:1.0.0
+# تگ کردن Docker Image
+docker tag $LOCAL_IMAGE "$ACR_LOGIN_SERVER/azuredemoapi:1.0.0"
+
+# Push کردن به ACR
+docker push "$ACR_LOGIN_SERVER/azuredemoapi:1.0.0"
 ```
 
 📦 خروجی `docker push` باید نشان دهد که لایه‌ها آپلود شده‌اند و در نهایت image در ACR موجود است.
