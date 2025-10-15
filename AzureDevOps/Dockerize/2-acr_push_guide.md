@@ -16,7 +16,9 @@
 
 در واقع Resource Group یک کانتینر منطقی برای منابع Azure است (مثل VM، Storage، ACR و غیره).
 
-و ACR_NAME اسم یکتا برای Azure Container Registry (ACR).
+و ACR_NAME اسم یکتا برای Azure Container Registry (ACR). یعنی Acr name همان نام رجیستری است که هنگام ساخت تعیین می‌کنید.
+و بر اساس همین نام، Azure loginServer می‌سازد: ACR name.azurecr.io
+
 
 همچنین azuredemoacr$(date +%s | tail -c 4) یعنی azuredemoacr + آخرین ۴ رقم timestamp فعلی، تا اسم یکتا باشد. چون Azure قوانین دارد: حروف کوچک و بدون فاصله باید باشد.
 
