@@ -1,4 +1,4 @@
-در yml فایل:
+در فایل YAML:
 ```yaml
 ...
 variables:
