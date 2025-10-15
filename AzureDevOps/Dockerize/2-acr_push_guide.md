@@ -28,7 +28,6 @@
 
 
 ```bash
-# متغیرها — اینها رو طبق نیازت تغییر بده
 $RESOURCE_GROUP = "AzureDemo-RG"
 $ACR_NAME = "azuredemoacr" + (Get-Random -Maximum 9999)  # اسم یکتا و کوچک
 $LOCATION = "westeurope"
