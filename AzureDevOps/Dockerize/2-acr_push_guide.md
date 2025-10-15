@@ -13,6 +13,17 @@
 > ```
 
 حالا با دستورات زیر ACR بساز:
+در واقع Resource Group یک کانتینر منطقی برای منابع Azure است (مثل VM، Storage، ACR و غیره).
+ACR_NAME
+
+اسم یکتا برای Azure Container Registry (ACR).
+
+همچنین azuredemoacr$(date +%s | tail -c 4) یعنی azuredemoacr + آخرین ۴ رقم timestamp فعلی، تا اسم یکتا باشد.
+
+لذا Azure قوانین دارد: حروف کوچک و بدون فاصله باید باشد.
+
+و LOCATION منطقه جغرافیایی دیتاسنتر Azure، مثل westeurope، که Resource Group و ACR در آن ایجاد می‌شوند.
+
 
 ```bash
 # متغیرها — اینها رو طبق نیازت تغییر بده
