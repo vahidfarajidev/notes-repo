@@ -23,6 +23,7 @@
 و LOCATION منطقه جغرافیایی دیتاسنتر Azure، مثل westeurope، که Resource Group و ACR در آن ایجاد می‌شوند.
 
 
+
 ```bash
 # متغیرها — اینها رو طبق نیازت تغییر بده
 RESOURCE_GROUP="AzureDemo-RG"
