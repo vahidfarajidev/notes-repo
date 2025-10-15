@@ -85,7 +85,7 @@ docker run -d -p 8080:80 --name azuredemoapi azuredemoapi:latest
   ```
   دسترسی داشته باشی.
 - برای متوقف کردن کانتینر:
-  ```powershell
+  ```bash
 docker stop azuredemoapi
 docker rm azuredemoapi
   ```
