@@ -45,7 +45,7 @@ variables:
 * اگر تگ پویا باشد → نسخه‌های مختلف حفظ می‌شوند و rollback راحت‌تر است
   ---
 
-# مدیریت Docker Image ها در ACR و Azure App Service Free
+## مدیریت Docker Image ها در ACR و Azure App Service Free
 
 وقتی روی **Azure App Service Free/Shared** کار می‌کنیم:
 
