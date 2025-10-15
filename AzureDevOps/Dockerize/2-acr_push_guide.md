@@ -13,6 +13,7 @@
 > ```
 
 حالا با دستورات زیر ACR بساز:
+
 در واقع Resource Group یک کانتینر منطقی برای منابع Azure است (مثل VM، Storage، ACR و غیره).
 ACR_NAME
 
