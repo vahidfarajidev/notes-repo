@@ -79,11 +79,6 @@ docker run -d -p 8080:80 --name azuredemoapi azuredemoapi:latest
 * `azuredemoapi:latest` → نام و تگ Image که قبلاً ساخته شده است
 
 ### نکات مهم:
-- بعد از اجرای این دستور، کانتینر در پس‌زمینه اجرا می‌شود و می‌توانی با مرورگر یا Postman به:
-  ```text
-  http://localhost:8080/api/hello
-  ```
-  دسترسی داشته باشی.
 - برای متوقف کردن کانتینر:
   ```bash
 docker stop azuredemoapi
@@ -91,7 +86,7 @@ docker rm azuredemoapi
   ```
 
 
-* Container روی پورت 8080 سیستم تو اجرا می‌شود
+* Container روی پورت 8080 سیستم تو در پس زمینه اجرا می‌شود
 * حالا مرورگر یا Postman را باز کن به:
 
 ```
