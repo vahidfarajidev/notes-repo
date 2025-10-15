@@ -15,9 +15,8 @@
 حالا با دستورات زیر ACR بساز:
 
 در واقع Resource Group یک کانتینر منطقی برای منابع Azure است (مثل VM، Storage، ACR و غیره).
-ACR_NAME
 
-اسم یکتا برای Azure Container Registry (ACR).
+و ACR_NAME اسم یکتا برای Azure Container Registry (ACR).
 
 همچنین azuredemoacr$(date +%s | tail -c 4) یعنی azuredemoacr + آخرین ۴ رقم timestamp فعلی، تا اسم یکتا باشد.
 
