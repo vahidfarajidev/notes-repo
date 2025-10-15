@@ -125,5 +125,5 @@ git push origin main
 
 ---
 
-وقتی گفتی **«برو قدم بعدی»**، می‌ریم سراغ **Deploy اتوماتیک این Docker Image از ACR به Azure App Service یا Azure Container Apps**.
+قدم بعدی: **Deploy اتوماتیک این Docker Image از ACR به Azure App Service یا Azure Container Apps**.
 
