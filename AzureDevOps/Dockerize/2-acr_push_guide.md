@@ -37,7 +37,7 @@ az group create --name $RESOURCE_GROUP --location $LOCATION
 az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Standard --location $LOCATION
 ```
 
-📘 `az acr create` خروجی‌ای می‌دهد که نام ACR را تأیید می‌کند.
+📘 و `az acr create` خروجی‌ای می‌دهد که نام ACR را تأیید می‌کند.
 نام نهایی ACR را ذخیره کن (مثلاً `azuredemoacr1234`).
 
 ---
