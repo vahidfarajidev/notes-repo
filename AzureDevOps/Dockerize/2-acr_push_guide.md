@@ -18,9 +18,7 @@
 
 و ACR_NAME اسم یکتا برای Azure Container Registry (ACR).
 
-همچنین azuredemoacr$(date +%s | tail -c 4) یعنی azuredemoacr + آخرین ۴ رقم timestamp فعلی، تا اسم یکتا باشد.
-
-لذا Azure قوانین دارد: حروف کوچک و بدون فاصله باید باشد.
+همچنین azuredemoacr$(date +%s | tail -c 4) یعنی azuredemoacr + آخرین ۴ رقم timestamp فعلی، تا اسم یکتا باشد. چون Azure قوانین دارد: حروف کوچک و بدون فاصله باید باشد.
 
 و LOCATION منطقه جغرافیایی دیتاسنتر Azure، مثل westeurope، که Resource Group و ACR در آن ایجاد می‌شوند.
 
