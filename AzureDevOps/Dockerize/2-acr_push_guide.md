@@ -58,7 +58,7 @@ az acr login --name <ACR_NAME>
 # az acr login --name azuredemoacr1234
 ```
 
-این دستور Docker را به رجیستری Azure لاگین می‌کند (نیاز به `docker login` جدا نیست اگر `az acr login` اجرا شود).
+این دستور Docker را به رجیستری Azure لاگین می‌کند (نیاز به `docker login` جدا نیست اگر `az acr login` اجرا شود). یعنی به ACR لاگین کنی و Docker image لوکال را Push کنی.
 
 ---
 
