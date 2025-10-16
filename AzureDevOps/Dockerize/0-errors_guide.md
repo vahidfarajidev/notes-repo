@@ -9,13 +9,18 @@
 The pipeline is not valid. Job Job: Step Docker2 input containerRegistry references service connection ... which could not be found.
 ```
 **علت:**
-- در YAML قبلی، `dockerRegistryServiceConnection` اشتباه بود یا Service Connection درست ایجاد نشده بود.
+- در YAML قبلی، `dockerRegistryServiceConnection` اشتباه بود یا Service Connection درست ایجاد نشده بود. در واقع Pipeline به یک Service Connection اشاره می‌کرد که وجود نداشت یا Authorization نداشت.
 
 **راه حل نهایی:**
-- ساخت **Service Connection** از نوع **Docker Registry / Azure Container Registry** با نام `AzureDemo-ACR`
-- انتخاب درست **Login Server** از ACR
-- اطمینان از **Authorized for all pipelines** بودن این Service Connection
-
+- ساخت یک Service Connection از نوع Docker Registry با نام AzureDemo-ACR.
+- انتخاب درست **Login Server** از ACR یعنی Login Server: azuredemoacr2873.azurecr.io
+- Username و Password: از ACR گرفته شد.
+- فایل YAML به‌روزرسانی شد تا از این Service Connection استفاده کند:
+  
+```yaml
+dockerRegistryServiceConnection: 'AzureDemo-ACR'
+containerRegistry: azuredemoacr2873.azurecr.io
+```
 ---
 
 ## خطا ۲ — انتخاب Agent اشتباه (Windows) برای .NET 9 Docker Images
