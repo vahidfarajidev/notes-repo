@@ -42,6 +42,27 @@ az group create --name $RESOURCE_GROUP --location $LOCATION
 az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Standard --location $LOCATION
 
 ```
+توجه: برای اجرای این دستورات توی **Developer PowerShell** نیازی به **Azure Resource Manager Connection** ندارید. اون Connection فقط برای **Azure DevOps Pipelines** استفاده می‌شه تا از داخل Pipeline بتونه با Azure ارتباط برقرار کنه.
+
+وقتی توی **local PowerShell** هستید و `az` CLI نصب و لاگین کرده باشید، دستوراتی مثل:
+
+```powershell
+az group create --name $RESOURCE_GROUP --location $LOCATION
+az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Standard --location $LOCATION
+```
+
+مستقیماً با Subscription شما تو Azure اجرا می‌شن و هیچ وابستگی به Service Connection ندارند.
+
+💡 نکات:
+
+1. مطمئن بشید با دستور `az login` وارد Azure شده‌اید.
+2. اگر چند Subscription دارید، می‌توانید با
+   ```powershell
+   az account set --subscription "<SUBSCRIPTION_ID>"
+   ```
+   Subscription فعال را تنظیم کنید.
+3. تمام دستورات بالا به **Resource Group و ACR** داخل همان Subscription که لاگین کرده‌اید اعمال می‌شوند.
+
 
 📘 و `az acr create` خروجی‌ای می‌دهد که نام ACR را تأیید می‌کند.
 نام نهایی ACR را ذخیره کن (مثلاً `azuredemoacr1234`).
