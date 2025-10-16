@@ -59,8 +59,6 @@ az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Standard -
    az account set --subscription "<SUBSCRIPTION_ID>"
    Subscription فعال را تنظیم کنید.
 3. تمام دستورات بالا به **Resource Group و ACR** داخل همان Subscription که لاگین کرده‌اید اعمال می‌شوند.
-
-اگر بخوای، می‌تونم یه نمونه کامل PowerShell script برات آماده کنم که Resource Group و ACR بسازه و بدون هیچ مشکل Scope اجرا بشه.
 ```
 
 
