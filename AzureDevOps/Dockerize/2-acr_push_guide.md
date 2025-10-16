@@ -43,7 +43,7 @@ az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Standard -
 
 ```
 ```markdown
-نه، برای اجرای این دستورات توی **Developer PowerShell** نیازی به **Azure Resource Manager Connection** ندارید. اون Connection فقط برای **Azure DevOps Pipelines** استفاده می‌شه تا از داخل Pipeline بتونه با Azure ارتباط برقرار کنه.
+توجه: برای اجرای این دستورات توی **Developer PowerShell** نیازی به **Azure Resource Manager Connection** ندارید. اون Connection فقط برای **Azure DevOps Pipelines** استفاده می‌شه تا از داخل Pipeline بتونه با Azure ارتباط برقرار کنه.
 
 وقتی توی **local PowerShell** هستید و `az` CLI نصب و لاگین کرده باشید، دستوراتی مثل:
 
