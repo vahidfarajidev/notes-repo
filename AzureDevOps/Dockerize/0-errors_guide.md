@@ -28,26 +28,27 @@ containerRegistry: azuredemoacr2873.azurecr.io
 no matching manifest for windows/amd64 ... mcr.microsoft.com/dotnet/sdk:9.0
 ```
 **علت:**
-- تصاویر .NET 9 برای Linux ساخته شده‌اند و روی Windows agent در Azure DevOps قابل Pull نیستند.
+- تصاویر .NET 9 برای Linux ساخته شده‌اند و روی Windows agent در Azure DevOps قابل Pull نیستند یا Docker Agent روی Windows بود ولی base image .NET 9 فقط روی Linux موجود بود (mcr.microsoft.com/dotnet/aspnet:9.0).
 
 **راه حل نهایی:**
 - تغییر **pool** به Linux agent:
 ```yaml
+pool:
 vmImage: 'ubuntu-latest'
 ```
-- اجرای Build و Push روی Agent لینوکسی
+- اجرای Build و Push روی Agent لینوکسی یا این باعث شد Docker بتواند image لینوکسی را Pull و Build کند.
 
 ---
 
 ## خطا ۳ — dotnet restore پروژه پیدا نشد
 ```
-MSBUILD : error MSB1003: Specify a project or solution file.
+MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
 ```
 **علت:**
-- Dockerfile مسیر پروژه (`.csproj`) را درست مشخص نکرده بود و دستور `dotnet restore` در دایرکتوری اشتباه اجرا می‌شد.
+- در واقع Dockerfile مسیر پروژه (`.csproj`) را درست مشخص نکرده بود و دستور `dotnet restore` در دایرکتوری اشتباه اجرا می‌شد. یا مسیر کاری در Dockerfile اشتباه بود یا .csproj در مسیر Build context نبود.
 
 **راه حل نهایی:**
-- اصلاح Dockerfile:
+- اصلاح Dockerfile تا مسیر پروژه و csproj درست تنظیم شود و COPY فایل‌ها به مسیر مناسب انجام شود.
 ```dockerfile
 COPY AzureDemoApi/AzureDemoApi.csproj ./AzureDemoApi/
 RUN dotnet restore ./AzureDemoApi/AzureDemoApi.csproj
@@ -56,12 +57,12 @@ RUN dotnet restore ./AzureDemoApi/AzureDemoApi.csproj
 
 ---
 
-## خطا ۴ — Push به ACR انجام نشد
+## خطا ۴ — Push Image به ACR انجام نشد
 ```
 An image does not exist locally with the tag: azuredemoacr2873.azurecr.io/azuredemoapi
 ```
 **علت:**
-- tag یا repository اشتباه تعریف شده بود
+- tag یا repository اشتباه تعریف شده بود یا Docker Build موفق شده بود ولی Tag دادن به image یا نام repository اشتباه بود.
 - Build و Push از tag مشابه نبود یا مسیر کامل Login Server استفاده نشده بود
 
 **راه حل نهایی:**
@@ -74,24 +75,9 @@ tags: $(containerRegistry)/$(imageRepository):$(tag)
 
 ---
 
-## خطا ۵ — Overwrite Image در ACR
-```
-هر بار Pipeline اجرا می‌شود، Image با تگ ثابت overwrite می‌شود
-```
-**راه حل نهایی:**
-- استفاده از **tag پویا** بر اساس Build ID:
-```yaml
-tag: '1.0.$(Build.BuildId)'
-```
-- این کار باعث می‌شود هر Build یک Image جدید داشته باشد و نسخه قبلی پاک نشود
-
----
-
 ## ✅ جمع‌بندی
 - Dockerfile مسیر پروژه را درست مشخص کرده
 - Agent لینوکسی برای سازگاری با .NET 9 استفاده شده
 - Service Connection به شکل صحیح ساخته شده
-- Tag پویا برای Versioning و Rollback ایجاد شده
-
 با این اصلاحات، Pipeline **Build و Push Docker Image به ACR** بدون مشکل اجرا می‌شود.
 
