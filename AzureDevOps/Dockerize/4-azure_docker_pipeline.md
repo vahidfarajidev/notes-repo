@@ -108,6 +108,46 @@ steps:
 هر Build یک tag یکتا می‌گیرد ($(Build.BuildId))، پس Image قبلی overwrite نمی‌شود.
 
 ---
+توجه داشته باشید فایل YAML بالایی در نهایت با خطاهای زیادی مواجه شد که بعد از اصلاح نهایی بصورت زیر درآمده است، ضمنا فایل YAML با tag یکتا بررسی نهایی نشده است و همون نسخه اولیه در این مقاله قرار دارد:
+```yaml
+# azure-pipelines-docker.yml
+# ==========================
+# CI/CD Pipeline برای ساخت و Push اتوماتیک Docker Image به ACR
+# ✅ Agent لینوکسی برای سازگاری با .NET 9 Docker Images
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  dockerRegistryServiceConnection: 'AzureDemo-ACR'  # Service Connection به ACR
+  imageRepository: 'azuredemoapi'
+  containerRegistry: 'azuredemoacr2873.azurecr.io'  # Login Server از ACR
+  tag: '1.0.0'
+
+steps:
+- task: Docker@2
+  displayName: Build Docker Image
+  inputs:
+    command: build
+    Dockerfile: '**/Dockerfile'
+    tags: |
+      $(containerRegistry)/$(imageRepository):$(tag)
+    buildContext: .
+
+- task: Docker@2
+  displayName: Push Docker Image to ACR
+  inputs:
+    command: push
+    tags: |
+      $(containerRegistry)/$(imageRepository):$(tag)
+    dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
+```
+---
 ### گام ۲ — Push و اجرای Pipeline
 
 1. فایل YAML را به Git اضافه و Commit کن:
