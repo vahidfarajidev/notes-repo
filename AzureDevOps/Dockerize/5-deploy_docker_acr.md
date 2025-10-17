@@ -51,6 +51,7 @@ http://<AppServiceName>.azurewebsites.net/api/hello
 ---
 
 قدم بعدی: **اضافه کردن مرحله‌ی Deploy اتوماتیک به Pipeline** تا هر Build جدید مستقیماً روی App Service مستقر شود. 🚀
+
 ---
 
 
