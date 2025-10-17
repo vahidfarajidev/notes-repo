@@ -5,6 +5,7 @@
 ---
 
 ### ۱) ساخت ACR (از طریق Azure CLI)
+توجه داشته باشیم که در Azure Portal می‌توانیم مستقیماً یک Azure Container Registry (ACR) جدید بسازیم، بدون نیاز به Azure CLI یا ARM Template. همین طور یک Resource Group جدید.
 
 > اگر از Azure CLI لاگین نیستی، ابتدا دستور زیر را بزن:
 >
