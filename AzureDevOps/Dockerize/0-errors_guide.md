@@ -81,3 +81,7 @@ tags: $(containerRegistry)/$(imageRepository):$(tag)
 - Service Connection به شکل صحیح ساخته شده
 با این اصلاحات، Pipeline **Build و Push Docker Image به ACR** بدون مشکل اجرا می‌شود.
 
+صفحه Troubleshoot pipeline runs خطاها در سایت مایکروسافت:
+https://learn.microsoft.com/en-us/azure/devops/pipelines/troubleshooting/troubleshooting?view=azure-devops
+
+
