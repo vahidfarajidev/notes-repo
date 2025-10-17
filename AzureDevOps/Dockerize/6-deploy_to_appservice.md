@@ -14,7 +14,7 @@
 فایل `azure-pipelines.yml` را باز کرده و این بخش را **بعد از مرحله‌ی Push** اضافه کنید:
 
 ```yaml
-- task: AzureWebAppContainer@2
+- task: AzureWebAppContainer@1
   displayName: Deploy to Azure App Service (Docker)
   inputs:
     azureSubscription: $(azureResourceManagerServiceConnection)   # همان Service Connection تعریف‌شده
