@@ -81,7 +81,7 @@ azuredemoacr2873.azurecr.io/azuredemoapi:latest
 و وقتی تو دستی App Service رو Restart کردی،
 رفت آخرین نسخهٔ همون Image (tag آخرین push) رو گرفت و بالا آورد.
 
-📌 且 Deploy واقعی از طریق Pipeline اتفاق نفتاد.
+📌 且 یعنی Deploy واقعی از طریق Pipeline اتفاق نفتاد.
 App Service فقط چون به اون Image وصل بود، بعد از Restart خودش Pull کرد.
 
 ---
