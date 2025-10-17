@@ -5,8 +5,10 @@
 ---
 
 ### ۱) ساخت ACR (از طریق Azure CLI)
+```markdown
 توجه داشته باشیم که در Azure Portal می‌توانیم مستقیماً یک Azure Container Registry (ACR) جدید بسازیم، بدون نیاز به Azure CLI یا ARM Template. همین طور یک Resource Group جدید.
 ضمنا ARM Template مخفف Azure Resource Manager Template هست. این یعنی یک فایل JSON که در آن زیرساخت (Infrastructure) مورد نیازت را به صورت کُد (Infrastructure as Code) تعریف می‌کنی.
+```
 
 > اگر از Azure CLI لاگین نیستی، ابتدا دستور زیر را بزن:
 >
