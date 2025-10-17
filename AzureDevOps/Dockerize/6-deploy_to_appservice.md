@@ -14,12 +14,12 @@
 فایل `azure-pipelines.yml` را باز کرده و این بخش را **بعد از مرحله‌ی Push** اضافه کنید:
 
 ```yaml
-- task: AzureWebAppContainer@1
+- task: AzureWebAppContainer@2
   displayName: Deploy to Azure App Service (Docker)
   inputs:
-    azureSubscription: 'AzureDemo-Connection'   # همان Service Connection تعریف‌شده
-    appName: 'AzureDemoApi-vahidfaraji'         # نام واقعی App Service شما
-    containers: 'azuredemoacr2873.azurecr.io/azuredemoapi:$(tag)'
+    azureSubscription: $(azureResourceManagerServiceConnection)   # همان Service Connection تعریف‌شده
+    appName: $(appServiceName)         # نام واقعی App Service شما
+    containers: '$(containerRegistry)/$(imageRepository):$(tag)' # تگ فعلاً ثابت در نظر گرفته شده است
 ```
 
 ---
