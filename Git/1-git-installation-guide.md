@@ -121,6 +121,5 @@ A --- B --- C --- D' --- E'   ← main (تاریخچه خطی)
 
 ---
 
-🧾 نویسنده: ChatGPT  
 📅 نسخه: 2025  
 📘 مناسب برای: VS Code + PHP + GitHub + Azure
