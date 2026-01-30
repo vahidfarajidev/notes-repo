@@ -9,7 +9,7 @@
 1. وارد **Group (Lotuscode)** شو
 2. روی **New Project → Create blank project** کلیک کن
 3. فرم را پر کن:
-   - **Project name**: GSMProject (یا هر اسم دلخواه)
+   - **Project name**: SampleProject (یا هر اسم دلخواه)
    - **Visibility**: **Private** ✅
    - Deployment Target: **هیچ‌کدام** انتخاب نکن (اختیاری)
 4. **Project Configuration**:
@@ -26,12 +26,12 @@
 
 1. پوشه پروژه بساز:
 ```bash
-mkdir GSMProject
-cd GSMProject
+mkdir SampleProject
+cd SampleProject
 ```
 2. فایل‌های پروژه HTML/CSS/JS/jQuery بساز:
 ```
-GSMProject/
+SampleProject/
 │── index.html
 │── style.css
 │── script.js
@@ -52,7 +52,7 @@ git init --initial-branch=main
 ## 4️⃣ اتصال به GitLab با HTTPS
 
 ```bash
-git remote add origin https://gitlab.com/lotuscode/gsmproject.git
+git remote add origin https://gitlab.com/lotuscode/sampleproject.git
 ```
 > چون URL پروژه شما HTTPS است، این روش راحت و امن است.
 
@@ -106,3 +106,4 @@ git push --set-upstream origin main
 6. `git push --set-upstream origin main`
 7. اضافه کردن نفر جدید فقط به پروژه → Developer
 8. بررسی دسترسی‌ها → نفر جدید فقط پروژه جدید، Ownerها همه چیز
+
