@@ -52,7 +52,7 @@ git init --initial-branch=main
 ## 4️⃣ اتصال به GitLab با HTTPS
 
 ```bash
-git remote add origin https://gitlab.com/lotuscode/gsmproject.git
+git remote add origin https://gitlab.com/lotuscode/sampleproject.git
 ```
 > چون URL پروژه شما HTTPS است، این روش راحت و امن است.
 
