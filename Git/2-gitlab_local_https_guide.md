@@ -52,7 +52,7 @@ git init --initial-branch=main
 ## 4️⃣ اتصال به GitLab با HTTPS
 
 ```bash
-git remote add origin https://gitlab.com/lotuscode/sampleproject.git
+git remote add origin https://gitlab.com/lotuscode/gsmproject.git
 ```
 > چون URL پروژه شما HTTPS است، این روش راحت و امن است.
 
@@ -106,4 +106,47 @@ git push --set-upstream origin main
 6. `git push --set-upstream origin main`
 7. اضافه کردن نفر جدید فقط به پروژه → Developer
 8. بررسی دسترسی‌ها → نفر جدید فقط پروژه جدید، Ownerها همه چیز
+
+
+---
+
+## 9️⃣ نکته مهم درباره `git push`
+
+دستور زیر فقط **بار اول** لازم است اجرا شود:
+
+```bash
+git push --set-upstream origin main
+```
+
+این دستور:
+- شاخه‌ی `main` را روی GitLab می‌سازد
+- ارتباط بین شاخه‌ی محلی `main` و شاخه‌ی ریموت `origin/main` را تنظیم می‌کند
+
+### ✅ از این به بعد (روال روزمره)
+
+بعد از هر تغییر در پروژه، این دستورات کافی هستند:
+
+```bash
+git status
+git add .
+git commit -m "your message"
+git push
+```
+
+Git از این به بعد می‌داند که کدها را به کدام Repository و Branch ارسال کند.
+
+### ⚠️ چه زمانی دوباره `--set-upstream` لازم می‌شود؟
+
+فقط زمانی که **Branch جدید** بسازید، مثلاً:
+
+```bash
+git checkout -b feature/new-ui
+git push --set-upstream origin feature/new-ui
+```
+
+---
+
+✅ **جمع‌بندی:**
+- اولین Push → `git push --set-upstream origin main`
+- Pushهای بعدی → فقط `git push`
 
