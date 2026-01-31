@@ -150,6 +150,8 @@ SessionStore = { "abc123": { "UserId": 21 } }
 ```
 - مقدار 21 برگردانده می‌شود و برنامه فقط با `userId` کار می‌کند.
 
+نکته: HttpContext.Session یک wrapper است روی SessionStore که با SessionID مطابقت داده شده، وقتی می‌گویی GetInt32("UserId")، فریم‌ورک خودش می‌رود به SessionStore مرتبط با SessionID و مقدار "UserId" را برمی‌گرداند. در واقع تو هیچوقت SessionID را نمی‌بینی یا دستکاری نمی‌کنی، فقط می‌پرسی «برای این Session چه مقدار UserId است؟»
+
 > نکته: برنامه‌نویس هیچوقت با SessionID کار نمی‌کند، فقط داده‌ها را از Session می‌گیرد.
 
 ### 2️⃣ با JWT
