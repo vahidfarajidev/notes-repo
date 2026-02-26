@@ -49,7 +49,7 @@ foreach (var order in query)
 * بعد از آن → `IEnumerable`
 * هنوز Query اجرا نشده ❗
 * هنگام `foreach`:
-  * همان SQL ساخته و اجرا می‌شود
+  * همان SQL ساخته و اجرا می‌شود پس همچنان Lazy Execution داریم، تنها تفاوت: بعد از AsEnumerable() ادامه LINQ در حافظه اجرا می‌شود، نه در SQL
 
 ### نکته مهم
 
@@ -93,7 +93,7 @@ var list = dbContext.Orders
 * `ToList()` همان لحظه Query را اجرا می‌کند
 * همه نتایج کامل داخل RAM می‌آیند
 * یک `List<Order>` ساخته می‌شود
-* دیگر Lazy نیست
+* دیگر Lazy نیست، چون همه داده‌ها materialize شده‌اند و دسترسی به آن‌ها نیاز به Query ندارد
 
 ---
 
