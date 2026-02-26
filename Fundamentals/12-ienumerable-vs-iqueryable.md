@@ -130,3 +130,50 @@ var users = dbContext.Users
 - Query executes **only when you enumerate** (`ToList()`, `First()`, `Count()`, etc.)
 
 This helps improve performance and memory usage significantly — especially with large datasets.
+
+## With IEnumerable
+
+When we use `IEnumerable`, the query runs on a collection that is already in memory (RAM).
+
+This means that before we can apply any filtering, all the data must be loaded into memory.
+
+The reason is that `IEnumerable` doesn’t know anything about the database; it only works with objects in RAM.
+
+In other words, `IEnumerable` has no way to convert the query into SQL and execute it on the database, unless we explicitly use `IQueryable` or methods like `Where` on an `IQueryable`.
+
+---
+
+## With IQueryable
+
+When we use `IQueryable`, the query is still lazy and executed on the database.
+
+LINQ operators like `Where` and `Select` are translated into SQL, and only the filtered results are loaded into memory.
+
+---
+
+## 🔹 Key Takeaway
+
+If the dataset is large, with `IEnumerable` you cannot filter data on the database before loading it into memory.
+
+The only way to filter on the database is to use `IQueryable`.
+
+---
+
+## ✅ Example in IEnumerable
+
+```csharp
+// Suppose we first load the entire Users table into a list
+var usersInMemory = dbContext.Users.ToList(); // all records are loaded into RAM
+
+// Now filtering happens in memory
+var adultNames = usersInMemory
+    .Where(u => u.Age > 18)
+    .Select(u => u.Name);
+```
+
+### Corresponding explanation:
+
+- All data is loaded into memory first → `dbContext.Users.ToList()` fetches the entire Users table from the database.
+- Filtering and selecting happen in memory → the condition `Age > 18` is applied on the list in RAM.
+
+If the table is large, this can consume a lot of memory and be slow, because the database didn’t perform the filtering.
